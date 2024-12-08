@@ -25,7 +25,8 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=2000)
     initiativePlace = models.CharField(max_length=50)
-    date = models.DateField()
+    datOfTask = models.DateField()
+    publishedDate = models.DateTimeField(auto_now_add=True)
     studentsName = models.TextField()
 
 
