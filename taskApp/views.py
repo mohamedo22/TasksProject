@@ -21,6 +21,7 @@ def login(request):
         check = "false"
         try:
             user = UserProfile.objects.get(email=email, password=password)
+
             if user:
                 auth_login(request, user)
                 send_mail("login Successfully", "There is a new login to your account in 'Sewedy PHP Tasks app'",
@@ -37,9 +38,15 @@ def login(request):
             except SuperAdmin.DoesNotExist:
                 return render(request, 'LoginPage.html', {'check': check})
     return render(request, 'LoginPage.html')
-@login_required
 def studentHome(request):
-    return  render(request,'Student_HomePage.html')
+    if request.user.is_superuser:
+        return redirect(adminHome)
+    if request.user.is_authenticated:
+        email = request.user.email
+        user = UserProfile.objects.get(email=email)
+        return  render(request,'Student_HomePage.html',{'userProfile':user})
+    else:
+        return render(request,'Student_HomePage.html')
 @login_required
 def adminHome(request):
     if request.user.is_superuser:

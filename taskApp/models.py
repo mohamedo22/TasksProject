@@ -13,7 +13,7 @@ class UserProfile(User):
     firstStudentRule = models.CharField(max_length=50 , null=True)
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)
-    profileImage = models.ImageField(upload_to='profileImages',default='static/Images/defaultUserProfile.png')
+    profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultUserProfile.png')
     def __str__(self):
         return self.name
 class SuperAdmin(User):
@@ -25,7 +25,7 @@ class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=2000)
     initiativePlace = models.CharField(max_length=50)
-    datOfTask = models.DateField()
+    dateOfTask = models.DateField(default=None)
     publishedDate = models.DateTimeField(auto_now_add=True)
     studentsName = models.TextField()
 
