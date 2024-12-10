@@ -1,3 +1,5 @@
+from tkinter.font import names
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect
 from .models import *
@@ -39,17 +41,28 @@ def login(request):
                 return render(request, 'LoginPage.html', {'check': check})
     return render(request, 'LoginPage.html')
 def studentHome(request):
+    users = UserProfile.objects.all()
+    users_data = []
+    for user in users:
+        users_data.append((user.id,user.name[:9]+"..." if len(user.name) > 9 else user.name ,user.firstStudentRule[:9]+"..." if len(user.firstStudentRule) >9 else user.firstStudentRule,user.secondStudentRule[:9]+"..."if len(user.secondStudentRule)>9 else user.secondStudentRule))
+    context = {
+        'usersData':users_data ,
+    }
     if request.user.is_superuser:
         return redirect(adminHome)
     if request.user.is_authenticated:
-        email = request.user.email
-        user = UserProfile.objects.get(email=email)
-        return  render(request,'Student_HomePage.html',{'userProfile':user})
+        userId = request.user.id
+        user = UserProfile.objects.get(id=userId)
+        context['userProfile'] = user
+        return  render(request,'Student_HomePage.html',context)
     else:
-        return render(request,'Student_HomePage.html')
+        return render(request,'Student_HomePage.html',context)
 @login_required
 def adminHome(request):
     if request.user.is_superuser:
         return render(request,'Admin_HomePage.html')
     else:
         return redirect(studentHome)
+@login_required
+def studentTasks(request , id):
+    return render(request,'Student_Tasks.html')
