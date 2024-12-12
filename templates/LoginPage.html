@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'Styles/LoginPage.css' %}">
 </head>
 <body>
-     <div id="continar" >
+     <div id="continar" class="flex mt-20" >
         <form method="POST">
             {% csrf_token %}
             <img src="{%static 'Images/logo.png'%}" id="logo_form" alt="">
@@ -23,7 +23,7 @@
                 <label for="floating_standard" class="absolute text-lg text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto" >Email</label>
             </div>
             <div class="relative" style="margin-top: 2rem; margin-bottom: 2rem;">
-                <input type="text" id="floating_standard" class="block py-2.5 px-0 w-[20rem] text-m text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " name="password" />
+                <input type="password" id="floating_standard" class="block py-2.5 px-0 w-[20rem] text-m text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " name="password" />
                 <label for="floating_standard" class="absolute text-lg text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Password</label>
             </div>
             <a href="{% url 'student_home' %}" class="my-4 mb-8">Enter As A Guest</a>

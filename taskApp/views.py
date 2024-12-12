@@ -74,4 +74,35 @@ def adminHome(request):
         return redirect(studentHome)
 @login_required
 def studentTasks(request , id):
-    return render(request,'Student_Tasks.html')
+    student = UserProfile.objects.get(id=id)
+    tasks = Task.objects.filter(user=student)
+    for task in tasks:
+        if len(task.title) > 52:
+            task.title = task.title[:52]+"..."
+        if len(task.description) > 148:
+            task.description = task.description[:148]+"..."
+    context = {
+        'student': student,
+        'tasks': tasks,
+    }
+    return render(request,'Student_Tasks.html',context)
+@login_required
+def addTask(request):
+    if request.method == 'POST':
+        user = UserProfile.objects.get(id=request.user.id)
+        title = request.POST.get('title')
+        initiativePlace = request.POST.get('initiativePlace')
+        description = request.POST.get('description')
+        initiativeType = request.POST.get('initiativeType')
+        dateOfTask = request.POST.get('dateOfTask')
+        formatted_date = datetime.strptime(dateOfTask, '%d/%m/%Y').strftime('%Y-%m-%d')
+        studentsName = request.POST.getlist('studentsName')
+        initiativeImages = request.FILES.getlist('initiativeImages')
+        task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
+        task.save()
+        for image in initiativeImages:
+                newImage = TaskImages(task=task,image=image)
+                newImage.save()
+        return render(request,'AddTask.html' , {'added':"True"})
+
+    return  render(request , 'AddTask.html', {'added':''})
