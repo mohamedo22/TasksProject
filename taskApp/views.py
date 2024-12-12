@@ -1,5 +1,5 @@
 from tkinter.font import names
-
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect
 from .models import *
@@ -42,6 +42,15 @@ def login(request):
     return render(request, 'LoginPage.html')
 def studentHome(request):
     users = UserProfile.objects.all()
+    if request.method == 'POST':
+        filters = request.POST.getlist('filter')
+        if request.method == 'POST':
+            filters = request.POST.getlist('filter')
+            if filters:
+                query = Q()
+                for filter in filters:
+                    query |= Q(firstStudentRule=filter) | Q(secondStudentRule=filter)
+                users = users.filter(query)
     users_data = []
     for user in users:
         users_data.append((user.id,user.name[:9]+"..." if len(user.name) > 9 else user.name ,user.firstStudentRule[:9]+"..." if len(user.firstStudentRule) >9 else user.firstStudentRule,user.secondStudentRule[:9]+"..."if len(user.secondStudentRule)>9 else user.secondStudentRule))
