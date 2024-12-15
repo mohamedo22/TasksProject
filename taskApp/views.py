@@ -8,7 +8,17 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import authenticate as auth_authenticate
 # Create your views here.
+def send_login_email(email):
+    """Sends an email notification for successful login."""
+    send_mail(
+        subject="Login Successfully",
+        message="There is a new login to your account in 'Sewedy PHP Tasks app'.",
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[email],
+        fail_silently=False
+    )
 def redirect_user_based_on_role(user):
     if user.is_superuser:
         return redirect(adminHome)
@@ -18,24 +28,35 @@ def login(request):
     if request.user.is_authenticated:
         return redirect_user_based_on_role(request.user)
     if request.method == 'POST':
+        print(request.POST)
         email = request.POST.get('email')
         password = request.POST.get('password')
+        remember_me = request.POST.get('rememberMy', 'off')
         check = "false"
         try:
             user = UserProfile.objects.get(email=email, password=password)
-
             if user:
                 auth_login(request, user)
-                send_mail("login Successfully", "There is a new login to your account in 'Sewedy PHP Tasks app'",
-                          settings.EMAIL_HOST_USER, [email], fail_silently=False)
+                if remember_me == 'on':
+                    request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+                    print("Remember Me checked: Session expiry set to 30 days")
+                elif remember_me == 'off':
+                    request.session.set_expiry(0)  # Expire when browser closes
+                    print("Remember Me unchecked: Session expiry set to browser close")
+                print(f"Remember Me: {remember_me}")
+                print(f"Final session expiry: {request.session.get_expiry_age()} seconds")
                 return redirect(studentHome)
         except UserProfile.DoesNotExist:
             try:
                 superAdmin = SuperAdmin.objects.get(email=email,password=password)
                 if superAdmin:
                     auth_login(request, superAdmin)
-                    send_mail("login Successfully", "There is a new login to your account in 'Sewedy PHP Tasks app'",
-                              settings.EMAIL_HOST_USER, [email], fail_silently=False)
+                    remember_me = request.POST.get('rememberMy', None)
+                    if remember_me:
+                        request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
+                    else:
+                        request.session.set_expiry(0)
+                    send_login_email(email)
                     return redirect(adminHome)
             except SuperAdmin.DoesNotExist:
                 return render(request, 'LoginPage.html', {'check': check})
