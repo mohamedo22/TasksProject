@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
@@ -10,6 +12,7 @@ class UserProfile(User):
     location = models.CharField(max_length=100)
     nationalId = models.CharField(max_length=20)
     userPermission = models.CharField(max_length=50)
+    grade = models.CharField(max_length=50)
     firstStudentRule = models.CharField(max_length=50 , null=True)
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)
@@ -43,6 +46,7 @@ class TaskComments(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     comment = models.TextField(max_length=2000)
+    likesCount = models.IntegerField(default=0,null=True)
     def __str__(self):
         return self.comment
 class Statistics(models.Model):

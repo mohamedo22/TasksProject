@@ -9,7 +9,8 @@ urlpatterns = [
     path('student_home/',studentHome,name='student_home'),
     path('admin_home/',adminHome,name='admin_home'),
     path('student_home/tasks/<int:id>' , studentTasks , name='student_tasks'),
-    path('add_task',addTask,name='addTask')
+    path('add_task',addTask,name='addTask'),
+    path('student_home/tasks/task/<int:id>',taskDetails, name='taskDetails')
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

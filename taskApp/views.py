@@ -40,8 +40,8 @@ def login(request):
                 if remember_me == 'on':
                     request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
                     print("Remember Me checked: Session expiry set to 30 days")
-                elif remember_me == 'off':
-                    request.session.set_expiry(0)  # Expire when browser closes
+                else:
+                    request.session.set_expiry(60*30)  # Expire when browser closes
                     print("Remember Me unchecked: Session expiry set to browser close")
                 print(f"Remember Me: {remember_me}")
                 print(f"Final session expiry: {request.session.get_expiry_age()} seconds")
@@ -62,9 +62,8 @@ def login(request):
                 return render(request, 'LoginPage.html', {'check': check})
     return render(request, 'LoginPage.html')
 def studentHome(request):
-    users = UserProfile.objects.all()
+    users = UserProfile.objects.filter(userPermission='student')
     if request.method == 'POST':
-        filters = request.POST.getlist('filter')
         if request.method == 'POST':
             filters = request.POST.getlist('filter')
             if filters:
@@ -72,17 +71,20 @@ def studentHome(request):
                 for filter in filters:
                     query |= Q(firstStudentRule=filter) | Q(secondStudentRule=filter)
                 users = users.filter(query)
-    users_data = []
     for user in users:
-        users_data.append((user.id,user.name[:9]+"..." if len(user.name) > 9 else user.name ,user.firstStudentRule[:9]+"..." if len(user.firstStudentRule) >9 else user.firstStudentRule,user.secondStudentRule[:9]+"..."if len(user.secondStudentRule)>9 else user.secondStudentRule))
+        user.name = user.name[:7]+"..."
+        for task in user.task_set.all():
+            task.title = task.title[:14] + "..."
+
     context = {
-        'usersData':users_data ,
+        'usersData':users ,
     }
     if request.user.is_superuser:
         return redirect(adminHome)
     if request.user.is_authenticated:
         userId = request.user.id
         user = UserProfile.objects.get(id=userId)
+        user.name = user.name[:7] + "..."
         context['userProfile'] = user
         return  render(request,'Student_HomePage.html',context)
     else:
@@ -116,7 +118,7 @@ def addTask(request):
         description = request.POST.get('description')
         initiativeType = request.POST.get('initiativeType')
         dateOfTask = request.POST.get('dateOfTask')
-        formatted_date = datetime.strptime(dateOfTask, '%d/%m/%Y').strftime('%Y-%m-%d')
+        formatted_date = datetime.strptime(dateOfTask, '%m/%d/%Y').strftime('%Y-%m-%d')
         studentsName = request.POST.getlist('studentsName')
         initiativeImages = request.FILES.getlist('initiativeImages')
         task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
@@ -127,3 +129,5 @@ def addTask(request):
         return render(request,'AddTask.html' , {'added':"True"})
 
     return  render(request , 'AddTask.html', {'added':''})
+def taskDetails(request,id):
+    pass

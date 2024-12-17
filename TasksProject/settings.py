@@ -139,11 +139,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # auth setting
-SESSION_COOKIE_AGE = 1209600  # Default: 2 weeks
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Allows explicit control via set_expiry()
-SESSION_COOKIE_SECURE = True  # For HTTPS in production
-# Make sure cookies aren't restored automatically.
 
-
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Allows explicit control via set_expiry()
+# SESSION_COOKIE_AGE = None
 LOGIN_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
