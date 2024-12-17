@@ -2,6 +2,8 @@ from tkinter.font import names
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect
+from django.template.defaultfilters import lower
+
 from .models import *
 from datetime import *
 from django.contrib import messages
@@ -64,13 +66,15 @@ def login(request):
 def studentHome(request):
     users = UserProfile.objects.filter(userPermission='student')
     if request.method == 'POST':
-        if request.method == 'POST':
             filters = request.POST.getlist('filter')
+            search = request.POST.get('search')
             if filters:
                 query = Q()
                 for filter in filters:
                     query |= Q(firstStudentRule=filter) | Q(secondStudentRule=filter)
                 users = users.filter(query)
+            if search:
+                users = UserProfile.objects.filter(name__icontains=search)
     for user in users:
         user.name = user.name[:7]+"..."
         for task in user.task_set.all():
@@ -99,6 +103,22 @@ def adminHome(request):
 def studentTasks(request , id):
     student = UserProfile.objects.get(id=id)
     tasks = Task.objects.filter(user=student)
+    users = UserProfile.objects.filter(userPermission='student')
+    if request.method == 'POST':
+        filters = request.POST.getlist('filter')
+        search = request.POST.get('search')
+        if filters:
+            query = Q()
+            for filter in filters:
+                query |= Q(initiativeType = filter)
+            tasks = tasks.filter(query)
+        if search:
+            tasks = Task.objects.filter(title__icontains=search)
+    for user in users:
+        user.name = user.name[:7] + "..."
+        for task in user.task_set.all():
+            task.title = task.title[:14] + "..."
+    student.name = student.name[:7]+"..."
     for task in tasks:
         if len(task.title) > 52:
             task.title = task.title[:52]+"..."
@@ -107,6 +127,7 @@ def studentTasks(request , id):
     context = {
         'student': student,
         'tasks': tasks,
+        'usersData':users ,
     }
     return render(request,'Student_Tasks.html',context)
 @login_required

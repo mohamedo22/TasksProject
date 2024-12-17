@@ -13,13 +13,14 @@
         <link rel="stylesheet" href="{% static 'Styles/StudentHome.css' %}" />
     </head>
     <body>
+    <div class="flex px-[1rem] pr-[2rem] sm:px-[3rem]">
     {% if user.is_authenticated %}
-    <div class="flex px-[3rem]">
+
 
 
 <!-- drawer init and show -->
-<div class="text-center">
-   <button class="mt-8 mr-6 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
+<div class="text-center hidden sm:block">
+   <button class="mt-8 w-max sm:mr-6 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
     <img src="{% static 'Images/Menu.gif' %}" alt="logo" class="size-8" />
    </button>
 </div>
@@ -34,7 +35,7 @@
   <div class="py-4 overflow-y-auto">
       <ul class="space-y-2 font-medium">
             {% for user in usersData %}
-            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="{{ user.name }}{{ user.id }}">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                   </svg>
@@ -43,12 +44,10 @@
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                   </svg>
             </button>
-            <ul id="dropdown-example" class="hidden py-2 space-y-2">
+            <ul id="{{ user.name }}{{ user.id }}" class="hidden py-2 space-y-2">
                   {% if user.task_set.all %}
                   	{% for task in user.task_set.all %}
                   		<li >
-                        
-
                          <a href="{% url 'taskDetails' task.id %}" class="flex items-center gap-2 w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="9" stroke="#04C847" stroke-width="2"/>
@@ -62,14 +61,14 @@
                       <li>
                          <p  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Student Has No task !</p>
                       </li>
-                  {% endif %} 
+                  {% endif %}
             </ul>
             {% endfor %}
       </ul>
    </div>
 </div>
 
-    <div class="flex items-center gap-6">
+    <div class="flex items-center sm:gap-6 gap-1">
         <img src="{% static 'Images/iats-logo.svg' %}" alt="IATS logo" class="size-24" />
         <img src="{% static 'Images/PHP-logo.png' %}" alt="PHP logo" class="size-12" />
     </div>
@@ -143,7 +142,7 @@
     {% endif %}
         <div  class="flex relative gap-8 p-8">
           <!-- Availability Filter -->
-          <div class="absolute sm:right-[15rem]">
+          <div class="absolute w-max sm:right-[5rem] flex items-center gap-12">
             <details class="group [&_summary::-webkit-details-marker]:hidden">
               <summary
                 class="flex cursor-pointer items-center gap-2 border-b-2 border-blue-600 pb-2 text-gray-900 transition-all duration-300 hover:border-blue-800"
@@ -196,22 +195,38 @@
                 </form>
               </div>
             </details>
+
+            <form method="post" class="sm:w-[17rem] w-[15rem] mx-auto">
+                {% csrf_token %}
+                <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </div>
+                    <input type="search" name="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search By name"  />
+                    <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                </div>
+                </form>
+
           </div>
+
 {#            ######################}
-            <div class="grid sm:grid-cols-3 w-full  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[.3rem] sm:px-[8rem] mt-20"
+            <div class="grid sm:grid-cols-4 w-full  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[1rem] sm:px-[4rem] mt-20"
                 style=" background: url('{% static "Images/backGStudentHome.png" %}') no-repeat center fixed; background-size: 30%;">
                 {% if usersData %}
                 	{% for user in usersData %}
-                    <a href="{% url 'student_tasks' user.id %}" class="w-max h-max  flex items-center gap-2 p-2 rounded-lg transition-all duration-300 border-2 border-slate-500 hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
+                    <a href="{% url 'student_tasks' user.id %}" class="w-max h-max  flex items-center gap-2 p-1 rounded-lg transition-all duration-300  hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
                         <!-- Card -->
-                          <div class="flex items-center bg-white shadow-lg rounded-lg overflow-hidden max-w-sm hover:scale-105 transition-transform duration-300">
+                          <div class="flex items-center bg-[#212529] shadow-lg rounded-lg overflow-hidden w-[19rem] h-[5rem] hover:scale-105 transition-transform duration-300">
                             <!-- Image Section -->
                             <img src="{{ user.profileImage.url }}" alt="Profile Image" class="h-24 w-24 object-cover rounded-l-lg">
 
                             <!-- Text Section -->
                             <div class="p-4">
-                              <h2 class="text-lg font-semibold text-gray-800">{{ user.name }}</h2>
-                              <p class="text-gray-500 text-sm">{{ user.grade }}</p>
+                              <h2 class="text-lg font-semibold text-white">{{ user.name }}</h2>
+                              <p class="text-white text-sm">{{ user.grade }}</p>
                             </div>
   </div>
                     </a>
