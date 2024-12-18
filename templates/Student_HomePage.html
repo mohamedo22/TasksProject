@@ -27,7 +27,7 @@
 
 <!-- drawer component -->
 <div id="drawer-navigation" class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800" tabindex="-1" aria-labelledby="drawer-navigation-label">
-    <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menu</h5>
+    <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">All Tasks</h5>
     <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" >
         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         <span class="sr-only">Close menu</span>
@@ -147,7 +147,7 @@
               <summary
                 class="flex cursor-pointer items-center gap-2 border-b-2 border-blue-600 pb-2 text-gray-900 transition-all duration-300 hover:border-blue-800"
               >
-                <span class="text-sm font-semibold text-blue-800"> Sort By </span>
+                <span class="text-sm font-semibold text-blue-800"> Filter </span>
 
                 <span class="transition-all duration-300 group-open:-rotate-180">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-blue-800">
@@ -218,17 +218,16 @@
                 {% if usersData %}
                 	{% for user in usersData %}
                     <a href="{% url 'student_tasks' user.id %}" class="w-max h-max  flex items-center gap-2 p-1 rounded-lg transition-all duration-300  hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
-                        <!-- Card -->
-                          <div class="flex items-center bg-[#212529] shadow-lg rounded-lg overflow-hidden w-[19rem] h-[5rem] hover:scale-105 transition-transform duration-300">
-                            <!-- Image Section -->
-                            <img src="{{ user.profileImage.url }}" alt="Profile Image" class="h-24 w-24 object-cover rounded-l-lg">
+                        <div class="bg-white shadow-lg rounded-xl p-4 w-64 flex items-center gap-4">
+                        <img src="{{ user.profileImage.url }}" alt="Profile Picture"
+                             class="w-14 h-14 rounded-full object-cover" />
 
-                            <!-- Text Section -->
-                            <div class="p-4">
-                              <h2 class="text-lg font-semibold text-white">{{ user.name }}</h2>
-                              <p class="text-white text-sm">{{ user.grade }}</p>
-                            </div>
-  </div>
+                        <div>
+                          <h3 class="text-gray-800 font-semibold text-lg">{{ user.name}}</h3>
+                          <p class="text-gray-500 text-sm">{{ user.grade }}</p>
+                        </div>
+                      </div>
+
                     </a>
                 {% endfor %}
                 {% else %}
@@ -247,42 +246,7 @@
             </div>
 {#            #######################}
             {% if user.is_authenticated %}
-          <div class=" fixed z-50 w-[20rem] h-16  -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 sm:hidden left-1/2 dark:bg-gray-700 dark:border-gray-600">
-            <div class="grid h-full divide-white divide-x-[2rem] w-max  grid-cols-5 mx-auto">
-                <button data-tooltip-target="tooltip-home" type="button" class="inline-flex flex-col items-center justify-center px-5 rounded-s-full hover:bg-gray-50 dark:hover:bg-gray-800 group">
-                    <svg class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                    </svg>
-                    <span class="sr-only">Home</span>
-                </button>
-                <div id="tooltip-home" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                    Home
-                    <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <div class="flex items-center justify-center">
-                    <button data-tooltip-target="tooltip-new" type="button" class="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-                        <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                        </svg>
-                        <span class="sr-only">New item</span>
-                    </button>
-                </div>
-                <div id="tooltip-new" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                    Create new item
-                    <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
-                <button data-tooltip-target="tooltip-profile" type="button" class="inline-flex flex-col items-center justify-center px-5 rounded-e-full hover:bg-gray-50 dark:hover:bg-gray-800 group">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776" />
-                    </svg>
-                    <span class="sr-only">My Tasks</span>
-                </button>
-                <div id="tooltip-profile" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                    My Tasks
-                    <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
-            </div>
-        </div>
+                {% include 'components/footer_phone.html' %}
             {% endif %}
      <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
      <script src="{% static 'Scripts/StudentHome.js' %}"></script>

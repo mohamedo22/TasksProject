@@ -1,21 +1,5 @@
-<!DOCTYPE html>
 {% load static %}
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Student Tasks Page</title>
-        <link rel="icon" href="{%static 'images/logo.png'%}">
-        <link rel="stylesheet" href="{% static 'Styles/StudentTask.css' %}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-
-    </head>
-    <body class=" px-16">
-    <div class="flex px-[1rem] pr-[2rem] sm:px-[3rem]">
+<div class="flex px-[1rem] pr-[2rem] sm:px-[3rem]">
     {% if user.is_authenticated %}
 
 
@@ -37,7 +21,7 @@
   <div class="py-4 overflow-y-auto">
       <ul class="space-y-2 font-medium">
             {% for user in usersData %}
-            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="{{ user.name }}{{ user.id }}">
+            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                   </svg>
@@ -46,7 +30,7 @@
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                   </svg>
             </button>
-            <ul id="{{ user.name }}{{ user.id }}" class="hidden py-2 space-y-2">
+            <ul id="dropdown-example" class="hidden py-2 space-y-2">
                   {% if user.task_set.all %}
                   	{% for task in user.task_set.all %}
                   		<li >
@@ -80,7 +64,7 @@
             <div class="border-b border-gray-200">
               <nav class="-mb-px flex gap-20" aria-label="Tabs">
                 <a
-                  href="{% url 'student_home' %}"
+                  href="#"
                   class="inline-flex shrink-0 items-center gap-2 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 "
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -199,7 +183,7 @@
                   <summary
                     class="flex cursor-pointer items-center gap-2 border-b-2 border-blue-600 pb-2 text-gray-900 transition-all duration-300 hover:border-blue-800"
                   >
-                    <span class="text-sm font-semibold text-blue-800"> Filter </span>
+                    <span class="text-sm font-semibold text-blue-800"> Sort By </span>
 
                     <span class="transition-all duration-300 group-open:-rotate-180">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-blue-800">
@@ -264,77 +248,3 @@
 
               </div>
           </div>
-
-            <div class="mt-16 gap-[4rem] sm:-translate-x-[12rem] -translate-x-[5rem]  sm:ml-0 grid sm:grid-cols-3">
-            {% if tasks %}
-                {% for task in tasks %}
-                <article class=" overflow-hidden rounded-lg w-[22rem] border border-gray-100 bg-white shadow-sm">
-                    <div id="controls-carousel-{{ forloop.counter }}" class="relative w-full" data-carousel="static">
-                        <!-- Carousel wrapper -->
-                        <div class="relative h-56 overflow-hidden rounded-lg md:h-78">
-                            {% for image in task.taskimages_set.all %}
-                            <div class="duration-700 ease-in-out {{ forloop.first|yesno:'block,hidden' }}" data-carousel-item>
-                                <img src="{{ image.image.url }}"
-                                     class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                                     alt="Task Image">
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        <!-- Slider controls -->
-                        <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                                </svg>
-                                <span class="sr-only">Previous</span>
-                            </span>
-                        </button>
-                        <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                                </svg>
-                                <span class="sr-only">Next</span>
-                            </span>
-                        </button>
-                    </div>
-
-                    <div class="p-4 sm:p-6">
-                        <a href="#">
-                            <h3 class="text-lg font-medium text-gray-900">
-                                {{ task.title }}
-                            </h3>
-                        </a>
-
-                        <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
-                            {{ task.description }}
-                        </p>
-
-                        <a href="#" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
-                            Get More Details
-                            <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
-                                &rarr;
-                            </span>
-                        </a>
-                    </div>
-                </article>
-                {% endfor %}
-                {% else %}
-                    <script>
-                    Swal.fire({
-                        text:"This Student Have No Task!",
-                        icon: "info",
-                        showConfirmButton: true,
-                        confirmButtonText: 'OK',
-                        customClass: {
-                            confirmButton: 'custom-button-class',
-                        },
-                    });
-                    </script>
-            {% endif %}
-        </div>
-            {% include 'components/footer_phone.html' %}
-        </div>
-    </body>
-</html>
