@@ -21,7 +21,7 @@
   <div class="py-4 overflow-y-auto">
       <ul class="space-y-2 font-medium">
             {% for user in usersData %}
-            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
+            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="{{ user.name }}{{ user.id }}">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                   </svg>
@@ -30,7 +30,7 @@
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                   </svg>
             </button>
-            <ul id="dropdown-example" class="hidden py-2 space-y-2">
+            <ul id="{{ user.name }}{{ user.id }}" class="hidden py-2 space-y-2">
                   {% if user.task_set.all %}
                   	{% for task in user.task_set.all %}
                   		<li >
@@ -64,7 +64,7 @@
             <div class="border-b border-gray-200">
               <nav class="-mb-px flex gap-20" aria-label="Tabs">
                 <a
-                  href="#"
+                  href="{% url 'student_home' %}"
                   class="inline-flex shrink-0 items-center gap-2 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 "
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -130,53 +130,12 @@
         <div  class="flex relative gap-8 sm:p-8 -ml-12 mt-8">
 
           <!-- Availability Filter -->
-          <div class="flex items-center h-[2rem]">
+          <div id="av-filter" class="flex items-center h-[2rem]">
                <div class="flex flex-col sm:flex-row sm:justify-between w-full sm:items-center">
-            <nav aria-label="Breadcrumb" class="flex -mt-12 mb-12 -ml-5 hidden sm:m-0 sm:ml-4 sm:block">
-              <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
-                <li class="flex items-center">
-                  <a
-                    href="{% url 'student_home' %}"
-                    class="flex h-10 items-center gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="size-5 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      />
-                    </svg>
-
-                    <span class="ms-1.5 text-xs text-white font-medium"> Home </span>
-                  </a>
-                </li>
-
-                <li class="relative flex items-center">
-                  <span
-                    class="absolute inset-y-0 -start-px h-10 w-4 bg-[#0EA5E9] [clip-path:_polygon(0_0,_0%_100%,_100%_50%)] rtl:rotate-180"
-                  >
-                  </span>
-
-                  <a
-                    href=""
-                    class="flex h-10 items-center bg-white pe-4 ps-8 text-xs font-medium transition hover:text-gray-900"
-                  >
-                    Tasks
-                  </a>
-                </li>
-              </ol>
-            </nav>
-            <div  class="flex relative gap-8 p-8 ">
-              <!-- Availability Filter -->
-            </div>
-        </div>
+                    <div  class="flex relative gap-8 p-8 ">
+                      <!-- Availability Filter -->
+                    </div>
+                </div>
                 <div class="absolute w-max sm:right-[5rem] flex items-center gap-12">
 
                 <details class="group [&_summary::-webkit-details-marker]:hidden">
@@ -247,4 +206,5 @@
                     </form>
 
               </div>
-          </div>
+         </div>
+        </div>

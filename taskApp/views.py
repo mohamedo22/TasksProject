@@ -151,4 +151,21 @@ def addTask(request):
 
     return  render(request , 'AddTask.html', {'added':''})
 def taskDetails(request,id):
-    pass
+    task_sp = Task.objects.get(id=id)
+    student = UserProfile.objects.get(id=request.user.id)
+    users = UserProfile.objects.filter(userPermission='student')
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        if search:
+            tasks = Task.objects.filter(title__icontains=search)
+    for user in users:
+        user.name = user.name[:7] + "..."
+        for task in user.task_set.all():
+            task.title = task.title[:14] + "..."
+    student.name = student.name[:7] + "..."
+    context = {
+        'student': student,
+        'usersData': users,
+        'task':task_sp
+    }
+    return render(request,'TaskDetails.html' , context)

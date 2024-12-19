@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Student Tasks Page</title>
+        <link rel="icon" href="{%static 'images/logo.png'%}">
+        <link rel="stylesheet" href="{% static 'Styles/StudentTask.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+        <style>
+            #av-filter{
+                display: none;
+            }
+        </style>
+    </head>
+<body>
+            {% include 'components/header_component.html' %}
+             <nav aria-label="Breadcrumb" class="flex -mt-12 mb-12 h-max w-max translate-x-28 hidden sm:m-0 sm:ml-4 sm:block">
+                <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
+
+                <li class="flex items-center">
+                  <a
+                    href="{% url 'student_home' %}"
+                    class="flex h-10 items-center gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+
+                    <span class="ms-1.5 text-xs text-white font-medium"> Home </span>
+                  </a>
+                </li>
+
+                <li class="flex items-center">
+                  <a
+                    href="{% url 'student_tasks' user.id %}"
+                    class="flex h-10 items-center border-l-2 border-white gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                    <span class="ms-1.5 text-xs text-white font-medium"> Tasks </span>
+                  </a>
+                </li>
+                <li class="relative flex items-center">
+                  <span
+                    class="absolute inset-y-0 -start-px h-10 w-4 bg-[#0EA5E9] [clip-path:_polygon(0_0,_0%_100%,_100%_50%)] rtl:rotate-180"
+                  >
+                  </span>
+
+                  <a
+                    href=""
+                    class="flex h-10 items-center bg-white pe-4 ps-8 text-xs font-medium transition hover:text-gray-900"
+                  >
+                    Task ({{ task.title }})
+                  </a>
+                </li>
+              </ol>
+            </nav>
+    <div class="container flex items-start gap-[8rem] my-16  px-[8rem]">
+        {# gallery section#}
+        <div>
+            <div id="gallery" class="relative w-[40rem]" data-carousel="static">
+                <!-- Carousel wrapper -->
+                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                     <!-- Item  -->
+                    {% for image in task.taskimages_set.all %}
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                            <img src="{{ image.image.url }}" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Slider controls -->
+                <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                                </svg>
+                                <span class="sr-only">Previous</span>
+                            </span>
+                        </button>
+                <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                </svg>
+                                <span class="sr-only">Next</span>
+                            </span>
+                        </button>
+            </div>
+
+            <div class="flex items-center w-full justify-between">
+                <p>Done At : {{ task.dateOfTask }}</p>
+                <p>Published At : {{ task.publishedDate }}</p>
+            </div>
+        </div>
+{#        anther components #}
+        <div class="w-full overflow-hidden">
+{#            info section#}
+            <div class="flex flex-col gap-6">
+                <h1 class="font-bold text-black text-[2rem] w-[40rem]">{{ task.title }} </h1>
+                <p class="text-[#494848]">{{ task.description}} </p>
+            </div>
+{#            comment input section #}
+            <form class="flex flex-col gap-4 mt-20">
+                <label for="comment">Comment </label>
+                <input id="comment" name="comment" type="text" class="w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
+                <button type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
+            </form>
+{#            comments section #}
+            <div class="mt-24">
+                <div class="bg-white flex flex-col gap-4 rounded-lg shadow-md p-4 max-w-md">
+                    <!-- Comment Header -->
+                    <div class="flex items-center space-x-3">
+                      <!-- Avatar -->
+                      <div class="w-8 h-8 rounded-full"><img alt="user logo" src="{% static 'Images/Choose-rafiki.png' %}"/></div>
+                      <!-- User Info -->
+                      <p class="text-sm font-medium">Mohamed</p>
+                      <p class="text-gray-400 text-xs"> 14 min</p>
+                    </div>
+
+                    <!-- Comment Body -->
+                    <p class="text-gray-700 text-sm mt-3">
+                      That's a fantastic new app feature. You and your team did an excellent job of incorporating user testing feedback.
+                    </p>
+
+                    <!-- Like Section -->
+                    <div class="flex items-center justify-between space-x-2 text-gray-500 text-sm mt-3">
+                      <p class="cursor-pointer hover:text-gray-700">2 Likes</p>
+                      <a class="cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    {% include 'components/footer_phone.html' %}
+</body>
+</html>

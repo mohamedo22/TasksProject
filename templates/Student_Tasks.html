@@ -301,7 +301,7 @@
                     </div>
 
                     <div class="p-4 sm:p-6">
-                        <a href="#">
+                        <a href="{% url 'taskDetails' task.id %}">
                             <h3 class="text-lg font-medium text-gray-900">
                                 {{ task.title }}
                             </h3>
@@ -311,7 +311,7 @@
                             {{ task.description }}
                         </p>
 
-                        <a href="#" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                        <a href="{% url 'taskDetails' task.id %}" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
                             Get More Details
                             <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
                                 &rarr;
