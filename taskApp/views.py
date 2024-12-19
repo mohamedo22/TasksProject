@@ -169,3 +169,15 @@ def taskDetails(request,id):
         'task':task_sp
     }
     return render(request,'TaskDetails.html' , context)
+def deleteTask(request,id):
+    task = Task.objects.get(id=id)
+    task.delete()
+    return redirect(studentTasks,request.user.id)
+def addComment(request,id):
+    if request.method == 'POST':
+        task = Task.objects.get(id=id)
+        comment = request.POST.get('comment')
+        commenter = UserProfile.objects.get(id=request.user.id)
+        newComment = TaskComments(task=task,comment=comment,user=commenter)
+        newComment.save()
+        return redirect(taskDetails,id)

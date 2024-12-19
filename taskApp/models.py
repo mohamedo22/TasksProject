@@ -47,6 +47,7 @@ class TaskComments(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     comment = models.TextField(max_length=2000)
     likesCount = models.IntegerField(default=0,null=True)
+    publishedDate = models.DateTimeField(auto_now_add=True,null=True)
     def __str__(self):
         return self.comment
 class Statistics(models.Model):

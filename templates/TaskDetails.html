@@ -73,7 +73,7 @@
                 </li>
               </ol>
             </nav>
-    <div class="container flex items-start gap-[8rem] my-16  px-[8rem]">
+    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16  px-[8rem]">
         {# gallery section#}
         <div>
             <div id="gallery" class="relative w-[40rem]" data-carousel="static">
@@ -118,10 +118,11 @@
                 <p class="text-[#494848]">{{ task.description}} </p>
             </div>
 {#            comment input section #}
-            <form class="flex flex-col gap-4 mt-20">
+            <form method="post" class="flex flex-col gap-4 mt-20">
+                {% csrf_token %}
                 <label for="comment">Comment </label>
-                <input id="comment" name="comment" type="text" class="w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
-                <button type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
+                <input maxlength="120" id="comment" name="comment" type="text" class="w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
+                <button formaction="{% url 'addComment' task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
             </form>
 {#            comments section #}
             <div class="mt-24">
@@ -129,7 +130,7 @@
                     <!-- Comment Header -->
                     <div class="flex items-center space-x-3">
                       <!-- Avatar -->
-                      <div class="w-8 h-8 rounded-full"><img alt="user logo" src="{% static 'Images/Choose-rafiki.png' %}"/></div>
+                      <div class="w-8 h-8 rounded-full"><img alt="user logo" src="{{ task.user.profileImage.url }}"/></div>
                       <!-- User Info -->
                       <p class="text-sm font-medium">Mohamed</p>
                       <p class="text-gray-400 text-xs"> 14 min</p>
