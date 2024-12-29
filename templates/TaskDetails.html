@@ -125,33 +125,67 @@
                 <button formaction="{% url 'addComment' task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
             </form>
 {#            comments section #}
-            <div class="mt-24">
-                <div class="bg-white flex flex-col gap-4 rounded-lg shadow-md p-4 max-w-md">
-                    <!-- Comment Header -->
-                    <div class="flex items-center space-x-3">
-                      <!-- Avatar -->
-                      <div class="w-8 h-8 rounded-full"><img alt="user logo" src="{{ task.user.profileImage.url }}"/></div>
-                      <!-- User Info -->
-                      <p class="text-sm font-medium">Mohamed</p>
-                      <p class="text-gray-400 text-xs"> 14 min</p>
-                    </div>
-
-                    <!-- Comment Body -->
-                    <p class="text-gray-700 text-sm mt-3">
-                      That's a fantastic new app feature. You and your team did an excellent job of incorporating user testing feedback.
-                    </p>
-
-                    <!-- Like Section -->
-                    <div class="flex items-center justify-between space-x-2 text-gray-500 text-sm mt-3">
-                      <p class="cursor-pointer hover:text-gray-700">2 Likes</p>
-                      <a class="cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
+            {% for comment in task_comments %}
+    <div class="mt-24">
+        <div class="bg-white flex flex-col gap-4 rounded-lg shadow-md p-4 max-w-md">
+            <!-- Comment Header -->
+            <div class="flex items-center space-x-3">
+                <!-- Avatar -->
+                <div class="w-8 h-8">
+                    <img class="rounded-full" alt="user logo" src="{{ comment.user.profileImage.url }}"/>
+                </div>
+                <!-- User Info -->
+                <p class="text-sm font-medium">{{ comment.user.name }}</p>
+                <p class="text-gray-400 text-xs"> 14 min</p>
             </div>
+
+            <!-- Comment Body -->
+            <p class="text-gray-700 text-sm mt-3">
+                {{ comment.comment_text }}
+            </p>
+
+            <!-- Like Section -->
+            <div class="flex items-center justify-between space-x-2 text-gray-500 text-sm mt-3">
+                <p class=" hover:text-gray-700">{{ comment.likes_count }} Likes</p>
+                <form method="post">
+                {% csrf_token %}
+                    <button type="submit" formaction="{% url 'addCommentLike' task.id comment.id  %}">
+                        <a class="cursor-pointer">
+                            {% if comment.liked %}
+                            	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-5.0 -10.0 110.0 135.0" class="size-10">
+                                 <path d="m76.461 76.426 8.2617-27.625c0.78125-3.8828-1.0391-5.6875-5.8398-5.4766h-25.387l1.3203-25.84c-4.2031-3.2617-7.8008-2.4414-10.793 2.4609l-6.0508 25.867v36.164c0 1.3711 1.168 2.4883 2.5977 2.4883h25.684c5.5312-0.046875 8.9609-2.6914 10.207-8.0391zm-46.086 5.4023v-36.367c0-1.4531-1.1914-2.6445-2.6445-2.6445h-9.9844c-1.4531 0-2.6445 1.1914-2.6445 2.6445v36.367c0 1.4531 1.1914 2.6445 2.6445 2.6445h9.9844c1.4531-0.003906 2.6445-1.1914 2.6445-2.6445z" fill-rule="evenodd"/>
+                                </svg>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-5.0 -10.0 110.0 135.0" class="size-10">
+                                 <path d="m66.176 86.207c0.066407 0 0.12891-0.003906 0.19531-0.011719 3.1133-0.058593 5.6602-0.86719 7.6445-2.4297 2.0195-1.5938 3.3906-3.9102 4.1094-6.9414l7.4414-24.887c0.34766-0.91797 0.60547-1.7734 0.76953-2.5742 0.027343-0.09375 0.042968-0.19141 0.054687-0.28516 0.12891-0.72266 0.17969-1.3906 0.15234-2.0117-0.050781-1.1758-0.375-2.1836-0.96484-3.0234-0.59766-0.85156-1.4414-1.4883-2.5273-1.9102-0.78516-0.30469-1.6992-0.49219-2.7461-0.55469-0.085938-0.011719-0.17188-0.019531-0.26172-0.019531h-0.10938c-0.34766-0.011719-0.71094-0.011719-1.0898 0l-23.391 0.003906 1.2148-23.727c0.027343-0.58984-0.21875-1.1836-0.72266-1.5703-5.25-4.0742-9.7148-3.1211-13.398 2.8555-0.13281 0.1875-0.23047 0.40234-0.28516 0.64062l-5.7305 24.496c-0.09375 0.22266-0.16797 0.44922-0.22266 0.67969-0.074219 0.31641-0.11328 0.63672-0.11328 0.96094l-0.003906 35.965c0 1.207 0.51172 2.3008 1.3359 3.0898 0.80469 0.77344 1.9102 1.2539 3.1172 1.2539zm0.14062-3.7305c-0.046875-0.003906-0.09375-0.003906-0.14062-0.003906h-25.531c-0.21484 0-0.40234-0.078125-0.53125-0.19922-0.11328-0.10547-0.18359-0.25391-0.18359-0.40625v-35.754l5.8945-25.199c2.0234-3.1641 4.3789-3.9102 7.0664-2.2383l-1.2539 24.523c-0.007813 0.078125-0.015625 0.15625-0.015625 0.23438 0 1.0312 0.83594 1.8672 1.8672 1.8672h26.605c0.64453 0.042969 1.1836 0.14453 1.6133 0.3125 0.375 0.14453 0.64844 0.33984 0.81641 0.58203 0.17578 0.25 0.27344 0.59766 0.29297 1.0391 0.015625 0.34766-0.015625 0.73438-0.089844 1.1641l-8.1914 27.387-0.015625 0.058594-0.5 1.6758c-0.54297 1.4258-1.3125 2.5352-2.3164 3.3242-1.3281 1.043-3.125 1.5898-5.3867 1.6328zm-48.371-37.684h9.9258c0.21094 0 0.40234 0.082031 0.53516 0.21875l0.007812 0.007812c0.13281 0.13281 0.21484 0.32422 0.21484 0.53516v36.16c0 0.21094-0.082031 0.40234-0.21484 0.53516l-0.003906 0.003906-0.003906-0.003906c-0.13672 0.13672-0.32812 0.22266-0.53516 0.22266h-9.9258c-0.20703 0-0.39844-0.085937-0.53516-0.22266-0.13672-0.13672-0.22656-0.32812-0.22656-0.53516l0.003906-36.16c0-0.20703 0.085938-0.39844 0.22656-0.53516l0.050782-0.054687c0.12891-0.10547 0.29688-0.17188 0.48047-0.17188zm9.9258-3.7344h-9.9258c-1.1641 0-2.2344 0.45312-3.0391 1.1953-0.046875 0.039063-0.09375 0.082032-0.13672 0.125-0.8125 0.8125-1.3203 1.9375-1.3203 3.1758v36.16c0 1.2383 0.50391 2.3633 1.3203 3.1758 0.8125 0.81641 1.9414 1.3203 3.1758 1.3203h9.9258c1.2383 0 2.3633-0.50391 3.1758-1.3203l-0.003906-0.003906c0.81641-0.81641 1.3242-1.9414 1.3242-3.1719v-36.16c0-1.2266-0.50391-2.3477-1.3125-3.1641l-0.003907-0.007813-0.003906-0.003906h-0.003906c-0.82031-0.81641-1.9414-1.3203-3.1719-1.3203z" fill-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                        </a>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<!-- Pagination Controls -->
+<div class="pagination mt-4">
+    <span class="text-gray-500">
+        {% if task_comments.has_previous %}
+            <a href="?page=1" class="px-3 py-1">First</a>
+            <a href="?page={{ task_comments.previous_page_number }}" class="px-3 py-1">&laquo; Previous</a>
+        {% endif %}
+    </span>
+
+    <span class="text-gray-500">
+        {% if task_comments.has_next %}
+            <a href="?page={{ task_comments.next_page_number }}" class="px-3 py-1">Next &raquo;</a>
+            <a href="?page={{ task_comments.paginator.num_pages }}" class="px-3 py-1">Last</a>
+        {% endif %}
+    </span>
+</div>
+
+
         </div>
     </div>
     {% include 'components/footer_phone.html' %}

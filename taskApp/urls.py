@@ -11,7 +11,8 @@ urlpatterns = [
     path('student_home/tasks/<int:id>' , studentTasks , name='student_tasks'),
     path('add_task',addTask,name='addTask'),
     path('student_home/tasks/task/<int:id>',taskDetails, name='taskDetails'),
-    path('task/<int:id>/comment' , addComment , name='addComment')
+    path('task/<int:id>/comment' , addComment , name='addComment'),
+    path('task/<int:taskId>/addCommentLike/<int:id>',addCommentLike,name='addCommentLike')
 
 
 ]

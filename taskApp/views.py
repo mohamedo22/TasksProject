@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import *
 from datetime import *
 from django.contrib import messages
@@ -154,19 +154,36 @@ def taskDetails(request,id):
     task_sp = Task.objects.get(id=id)
     student = UserProfile.objects.get(id=request.user.id)
     users = UserProfile.objects.filter(userPermission='student')
-    if request.method == 'POST':
-        search = request.POST.get('search')
-        if search:
-            tasks = Task.objects.filter(title__icontains=search)
     for user in users:
         user.name = user.name[:7] + "..."
         for task in user.task_set.all():
             task.title = task.title[:14] + "..."
+    task_sp.user.name = task_sp.user.name[:20] + "..."
     student.name = student.name[:7] + "..."
+    task_comments = task_sp.taskcomments_set.all()
+    comments = [
+        {
+            "id" : comment.id,
+            "liked": request.session.get(f"{comment.id}"),
+            "comment_text": comment.comment,
+            "likes_count": comment.likesCount,
+            "user": comment.user,
+        }
+        for comment in task_comments
+    ]
+    page = request.GET.get('page', 1)
+    paginator = Paginator(comments, 2)
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        comments = paginator.page(1)
+    except EmptyPage:
+        comments = paginator.page(paginator.num_pages)
     context = {
         'student': student,
         'usersData': users,
-        'task':task_sp
+        'task':task_sp,
+        'task_comments':comments,
     }
     return render(request,'TaskDetails.html' , context)
 def deleteTask(request,id):
@@ -181,3 +198,17 @@ def addComment(request,id):
         newComment = TaskComments(task=task,comment=comment,user=commenter)
         newComment.save()
         return redirect(taskDetails,id)
+def addCommentLike(request,taskId,id):
+    if request.method == 'POST':
+        comment = TaskComments.objects.get(id=id)
+        commentLiked = request.session.get(f'{comment.id}',False)
+        if commentLiked:
+            comment.likesCount-=1
+            comment.save()
+            request.session[f'{comment.id}'] = False
+            return redirect(taskDetails,taskId)
+        else:
+            request.session[f'{comment.id}'] = True
+            comment.likesCount += 1
+            comment.save()
+            return redirect(taskDetails, taskId)
