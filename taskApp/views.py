@@ -161,18 +161,8 @@ def taskDetails(request,id):
     task_sp.user.name = task_sp.user.name[:20] + "..."
     student.name = student.name[:7] + "..."
     task_comments = task_sp.taskcomments_set.all()
-    comments = [
-        {
-            "id" : comment.id,
-            "liked": request.session.get(f"{comment.id}"),
-            "comment_text": comment.comment,
-            "likes_count": comment.likesCount,
-            "user": comment.user,
-        }
-        for comment in task_comments
-    ]
     page = request.GET.get('page', 1)
-    paginator = Paginator(comments, 2)
+    paginator = Paginator(task_comments, 2)
     try:
         comments = paginator.page(page)
     except PageNotAnInteger:
@@ -201,11 +191,10 @@ def addComment(request,id):
 def addCommentLike(request,taskId,id):
     if request.method == 'POST':
         comment = TaskComments.objects.get(id=id)
-        commentLiked = request.session.get(f'{comment.id}',False)
-        if commentLiked:
+        commentLiked = request.session.get(f'{comment.id}')
+        if commentLiked != None:
             comment.likesCount-=1
             comment.save()
-            request.session[f'{comment.id}'] = False
             return redirect(taskDetails,taskId)
         else:
             request.session[f'{comment.id}'] = True
