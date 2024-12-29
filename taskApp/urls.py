@@ -12,7 +12,8 @@ urlpatterns = [
     path('add_task',addTask,name='addTask'),
     path('student_home/tasks/task/<int:id>',taskDetails, name='taskDetails'),
     path('task/<int:id>/comment' , addComment , name='addComment'),
-    path('task/<int:taskId>/addCommentLike/<int:id>',addCommentLike,name='addCommentLike')
+    path('task/<int:taskId>/addCommentLike/<int:id>',addCommentLike,name='addCommentLike'),
+    path('setting/user_profile/<int:id>',userProfile,name='userProfile')
 
 
 ]

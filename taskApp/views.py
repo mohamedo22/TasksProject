@@ -199,6 +199,9 @@ def taskDetails(request,id):
         'task_comments':comments,
     }
     return render(request,'TaskDetails.html' , context)
+def userProfile(request,id):
+    user = UserProfile.objects.get(id=id)
+    return render(request,'UserProfile.html' , {'user':user})
 def deleteTask(request,id):
     task = Task.objects.get(id=id)
     task.delete()

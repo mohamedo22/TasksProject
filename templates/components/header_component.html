@@ -114,7 +114,7 @@
                 </div>
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
                   <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"><i class="fa-regular fa-circle-user mr-2 font-bold"> </i> Profile </a>
+                    <a href="{% url 'userProfile' user.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"><i class="fa-regular fa-circle-user mr-2 font-bold"> </i> Profile </a>
                   </li>
                 </ul>
                 <form method="POST" action="{% url 'logout' %}">
