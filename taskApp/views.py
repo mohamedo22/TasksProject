@@ -161,8 +161,31 @@ def taskDetails(request,id):
     task_sp.user.name = task_sp.user.name[:20] + "..."
     student.name = student.name[:7] + "..."
     task_comments = task_sp.taskcomments_set.all()
+    comments = []
+    for comment in task_comments:
+        # Calculate time difference
+        time_diff = datetime.now(timezone.utc) - comment.publishedDate
+        if time_diff.days > 0:
+            time_ago = f"{time_diff.days} day{'s' if time_diff.days > 1 else ''} ago"
+        elif time_diff.seconds >= 3600:
+            hours = time_diff.seconds // 3600
+            time_ago = f"{hours} hour{'s' if hours > 1 else ''} ago"
+        elif time_diff.seconds >= 60:
+            minutes = time_diff.seconds // 60
+            time_ago = f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+        else:
+            time_ago = "Just now"
+
+        comments.append({
+            "id":comment.id,
+            "liked": request.session.get(f"{comment.id}"),
+            "comment_text": comment.comment,
+            "likes_count": comment.likesCount,
+            "user": comment.user,
+            "time_ago": time_ago,
+        })
     page = request.GET.get('page', 1)
-    paginator = Paginator(task_comments, 2)
+    paginator = Paginator(comments, 2)
     try:
         comments = paginator.page(page)
     except PageNotAnInteger:
@@ -191,10 +214,11 @@ def addComment(request,id):
 def addCommentLike(request,taskId,id):
     if request.method == 'POST':
         comment = TaskComments.objects.get(id=id)
-        commentLiked = request.session.get(f'{comment.id}')
-        if commentLiked != None:
+        commentLiked = request.session.get(f'{comment.id}',False)
+        if commentLiked:
             comment.likesCount-=1
             comment.save()
+            request.session[f'{comment.id}'] = False
             return redirect(taskDetails,taskId)
         else:
             request.session[f'{comment.id}'] = True
