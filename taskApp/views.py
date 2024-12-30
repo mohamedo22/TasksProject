@@ -201,7 +201,7 @@ def taskDetails(request,id):
     return render(request,'TaskDetails.html' , context)
 def userProfile(request,id):
     user = UserProfile.objects.get(id=id)
-    return render(request,'UserProfile.html' , {'user':user})
+    return render(request,'UserProfile.html' , {'userData':user})
 def deleteTask(request,id):
     task = Task.objects.get(id=id)
     task.delete()

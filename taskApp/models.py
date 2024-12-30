@@ -12,7 +12,7 @@ class UserProfile(User):
     location = models.CharField(max_length=100)
     nationalId = models.CharField(max_length=20)
     userPermission = models.CharField(max_length=50)
-    grade = models.CharField(max_length=50)
+    grade = models.CharField(max_length=50,null=True)
     firstStudentRule = models.CharField(max_length=50 , null=True)
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)

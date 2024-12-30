@@ -6,14 +6,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Profile Page</title>
         <link rel="icon" href="{%static 'images/logo.png'%}">
-        <link rel="stylesheet" href="{% static 'Styles/StudentTask.css' %}">
+        <link rel="stylesheet" href="{% static 'Styles/userProfile.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </head>
-<body>
+<body class="w-full overflow-x-hidden">
     <div class="w-full h-[20rem] pt-10" style="background: url({% static 'Images/bannar.jpg' %}) no-repeat center">
         <nav aria-label="Breadcrumb" class="flex  hidden   sm:ml-4 sm:block">
                       <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
@@ -57,10 +57,81 @@
                       </ol>
                     </nav>
     </div>
-    <form class="flex -mt-[9rem] mx-16">
-        <div class="w-[20rem] h-[17rem] mt-10 bg-white border-2 ">
-            <img src="{{user.}}">
-        </div>
-    </form>
+
+
+        <form class=" mx-auto w-full  flex -mt-[10rem] ml-[10rem] gap-[8rem] items-center">
+                <div>
+                    <label id="imgLabel" {% if user.id == userData.id %} for="imgInput" {% endif %} class="relative w-[20rem] h-[25rem] overflow-hidden mt-10 bg-white border-2 flex items-center justify-center">
+                     <img id="userImage" alt="user image" src="{{ userData.profileImage.url }}" class="w-full h-full object-cover">
+                    </label>
+                    <input type="file" id="imgInput" class="hidden"
+                    onchange="document.getElementById('userImage').src = window.URL.createObjectURL(this.files[0])">
+                </div>
+                <div class="bg-white rounded-lg p-8 border-2 w-[45rem] py-[2rem] flex flex-col gap-6 items-center">
+                  <div class="relative z-0 w-full mb-5 group">
+                      <input type="text" readonly name="name" id="name" class="bg-slate-400 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" disabled value="{{ userData.name }}" placeholder=" " required />
+                      <label for="name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
+                  </div>
+                    <div class="relative z-0 w-full mb-5 group">
+                      <input type="email" name="email" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" disabled value="{{ userData.email }}" placeholder=" " required />
+                      <label for="email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email Address</label>
+                  </div>
+                {% if userData.userPermission == 'student' %}
+                	<div class="grid md:grid-cols-2 md:gap-6 w-full">
+                    <div class="relative z-0 w-full mb-5 group">
+                        <input type="text" name="firstRule" id="firstRule" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                {% if userData.firstStudentRule == 'AM' %}
+                                    value="Ambassador"
+                               {% elif userData.firstStudentRule == 'PS' %}
+                                    value="Study Support"
+                               {% elif userData.firstStudentRule == 'IN' %}
+                                    value="Intermediate"
+                               {% else %}
+                                    value="Professional Support"
+                                {% endif %}
+                               placeholder=" " disabled readonly required />
+                        <label for="firstRule" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">First Student Rule</label>
+                    </div>
+                    <div class="relative z-0 w-full mb-5 group ">
+                        <input type="text" name="secondRule" id="secondRule" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                {% if userData.secondStudentRule == 'AM' %}
+                                    value="Ambassador"
+                               {% elif userData.secondStudentRule == 'PS' %}
+                                    value="Study Support"
+                               {% elif userData.secondStudentRule == 'IN' %}
+                                    value="Intermediate"
+                               {% else %}
+                                    value="Professional Support"
+                                {% endif %} placeholder=" " disabled readonly required />
+                        <label for="secondRule" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Second Student Rule</label>
+                    </div>
+                  </div>
+                {% endif %}
+                  <div class="grid md:grid-cols-2 md:gap-6 w-full">
+                    <div class="relative z-0 w-full mb-5 group">
+                        <input type="text" name="rule" id="rule" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="{{ userData.userPermission }}" disabled readonly placeholder=" " required />
+                        <label for="rule" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Rule</label>
+                    </div>
+                      {% if userData.userPermission == 'student' %}
+                      	<div class="relative z-0 w-full mb-5 group">
+                        <input type="text" name="grade" id="grade" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value="{{ userData.grade }}" disabled  required />
+                        <label for="grade" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Grade</label>
+                    </div>
+                      {% endif %}
+
+                  </div>
+                <div class="grid md:grid-cols-2 md:gap-6 w-full">
+                    <div class="relative z-0 w-full mb-5 group">
+                        <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="phone" id="phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" value="{{ userData.phone }}" disabled readonly placeholder=" " required />
+                        <label for="phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone</label>
+                    </div>
+                    <div class="relative z-0 w-full mb-5 group">
+                        <input type="text" name="location" id="location" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " value="{{ userData.location }}" disabled readonly required />
+                        <label for="location" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Location</label>
+                    </div>
+                  </div>
+                     <button type="submit" class=" tracking-widest text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save Changes</button>
+                </div>
+        </form>
 </body>
 </html>
