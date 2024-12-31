@@ -217,18 +217,21 @@
                 style=" background: url('{% static "Images/backGStudentHome.png" %}') no-repeat center fixed; background-size: 30%;">
                 {% if usersData %}
                 	{% for user in usersData %}
-                    <a href="{% url 'student_tasks' user.id %}" class="w-max h-max  flex items-center gap-2 p-1 rounded-lg transition-all duration-300  hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
-                        <div class="bg-white shadow-lg rounded-xl p-4 w-64 flex items-center gap-4">
-                        <img src="{{ user.profileImage.url }}" alt="Profile Picture"
-                             class="w-14 h-14 rounded-full object-cover" />
+                    <div  class="w-max h-max  flex items-center gap-2 p-1 rounded-lg transition-all duration-300  hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
+                        <div class="bg-white shadow-lg rounded-xl p-4 w-64 flex items-center gap-4 ">
 
-                        <div>
-                          <h3 class="text-gray-800 font-semibold text-lg">{{ user.name}}</h3>
-                          <p class="text-gray-500 text-sm">{{ user.grade }}</p>
-                        </div>
+                           <a href="{% url 'userProfile' user.id %}">
+                               <img src="{{ user.profileImage.url }}" alt="Profile Picture"
+                                 class="w-14 h-14 rounded-full object-cover" />
+                           </a>
+                            <div class="h-[2rem] w-[2px] bg-slate-400"></div>
+                            <a href="{% url 'student_tasks' user.id %}">
+                              <h3 class="text-gray-800 font-semibold text-lg">{{ user.name}}</h3>
+                              <p class="text-gray-500 text-sm">{{ user.grade }}</p>
+                            </a>
                       </div>
 
-                    </a>
+                    </div>
                 {% endfor %}
                 {% else %}
                     <script>

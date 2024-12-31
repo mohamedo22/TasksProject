@@ -101,6 +101,8 @@ def adminHome(request):
         return redirect(studentHome)
 @login_required
 def studentTasks(request , id):
+    current_user = UserProfile.objects.get(id=request.user.id)
+    current_user.name = current_user.name[:7]+"..."
     student = UserProfile.objects.get(id=id)
     tasks = Task.objects.filter(user=student)
     users = UserProfile.objects.filter(userPermission='student')
@@ -128,6 +130,7 @@ def studentTasks(request , id):
         'student': student,
         'tasks': tasks,
         'usersData':users ,
+        'current_user':current_user,
     }
     return render(request,'Student_Tasks.html',context)
 @login_required
@@ -201,7 +204,24 @@ def taskDetails(request,id):
     return render(request,'TaskDetails.html' , context)
 def userProfile(request,id):
     user = UserProfile.objects.get(id=id)
-    return render(request,'UserProfile.html' , {'userData':user})
+    if request.method == 'POST':
+        if user.id == request.user.id:
+            email = request.POST.get('email')
+            grade = request.POST.get('grade')
+            phone = request.POST.get('phone')
+            profileImage = request.FILES.get('profileImage')
+            print(profileImage)
+            if email is not None:
+                user.email = email
+            if grade is not None:
+                user.grade = grade
+            if phone is not None:
+                user.phone = phone
+            if profileImage is not None:
+                user.profileImage = profileImage
+            user.save()
+            return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
+    return render(request,'UserProfile.html' , {'userData':user , "updated":""})
 def deleteTask(request,id):
     task = Task.objects.get(id=id)
     task.delete()
