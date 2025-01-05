@@ -1,6 +1,7 @@
 from tkinter.font import names
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -12,6 +13,38 @@ from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import authenticate as auth_authenticate
 # Create your views here.
+def createStatics():
+    try:
+        statics = Statistics.objects.first()  # Get the first record or None if not available
+        if statics is None:
+            print("No statistics found, creating new statistics...")# If no record exists, create new statistics
+            newStatics = Statistics()
+            newStatics.totalAdmins = SuperAdmin.objects.all().count()
+            newStatics.totalTasks = Task.objects.all().count()
+            newStatics.totalAmbassadorsTasks = Task.objects.filter(initiativeType='AM').count()
+            newStatics.totalStudySupportsTasks = Task.objects.filter(initiativeType='SS').count()
+            newStatics.totalProfessionalSupportsTasks = Task.objects.filter(initiativeType='PS').count()
+            newStatics.totalIntermediariesTasks = Task.objects.filter(initiativeType='IN').count()
+            newStatics.totalStudents = UserProfile.objects.filter(userPermission='student').count()
+            newStatics.totalAdmins = UserProfile.objects.filter(userPermission='admin').count()
+            query = Q()
+            query = Q(firstStudentRule='SS') | Q(secondStudentRule='SS')
+            newStatics.totalStudySupports = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='AM') | Q(secondStudentRule='AM')
+            newStatics.totalAmbassadors = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='PS') | Q(secondStudentRule='PS')
+            newStatics.totalProfessionalSupports = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='IN') | Q(secondStudentRule='IN')
+            newStatics.totalIntermediaries = UserProfile.objects.filter(query).count()
+            newStatics.totalGuests = 0
+            newStatics.save()
+
+        else:
+            print("Statistics already exist.")
+    except Exception as e:
+        print(f"Error creating statistics: {e}")
+        # Optionally log the error for further investigation
+
 def send_login_email(email):
     """Sends an email notification for successful login."""
     send_mail(
@@ -64,6 +97,7 @@ def login(request):
                 return render(request, 'LoginPage.html', {'check': check})
     return render(request, 'LoginPage.html')
 def studentHome(request):
+    createStatics()
     users = UserProfile.objects.filter(userPermission='student')
     if request.method == 'POST':
             filters = request.POST.getlist('filter')
@@ -92,13 +126,40 @@ def studentHome(request):
         context['userProfile'] = user
         return  render(request,'Student_HomePage.html',context)
     else:
+        if not request.session.get('gust'):
+            request.session['gust'] = True
+            statics = Statistics.objects.all()
+            statics = statics[0]
+            statics.totalGuests+=1
+            statics.save()
         return render(request,'Student_HomePage.html',context)
 @login_required
 def adminHome(request):
+    createStatics()
     if request.user.is_superuser:
-        return render(request,'Admin_HomePage.html')
+        admin = SuperAdmin.objects.get(id=request.user.id)
+        statics = Statistics.objects.first()  # Use first() to avoid IndexError
+        if statics:
+            admin.first_name = admin.first_name[:7] + "..."
+            context = {
+                'admin': admin,
+                'totalTasks': statics.totalTasks,
+                'totalAmbassadors': statics.totalAmbassadors,
+                'totalStudySupports': statics.totalStudySupports,
+                'totalProfessionalSupports': statics.totalProfessionalSupports,
+                'totalIntermediaries': statics.totalIntermediaries,
+                'totalStudySupportsTasks': statics.totalStudySupportsTasks,
+                'totalIntermediariesTasks': statics.totalIntermediariesTasks,
+                'totalAmbassadorsTasks': statics.totalAmbassadorsTasks,
+                'totalProfessionalSupportsTasks': statics.totalProfessionalSupportsTasks,
+                'totalGuests': statics.totalGuests,
+            }
+            return render(request, 'Admin_HomePage.html', context)
+        else:
+            return HttpResponse("Statistics not found")
     else:
         return redirect(studentHome)
+
 @login_required
 def studentTasks(request , id):
     current_user = UserProfile.objects.get(id=request.user.id)

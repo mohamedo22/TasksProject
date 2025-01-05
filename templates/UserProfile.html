@@ -34,7 +34,7 @@
     </script>
 {% endif %}
     <div class="w-full h-[20rem] pt-10" style="background: url({% static 'Images/bannar.jpg' %}) no-repeat center">
-        <nav aria-label="Breadcrumb" class="flex  hidden   sm:ml-4 sm:block">
+        <nav aria-label="Breadcrumb" class="flex ml-4">
                       <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
                         <li class="flex items-center">
                           <a
@@ -75,19 +75,19 @@
                         </li>
                       </ol>
                     </nav>
-    </div>
+         </div>
 
 
-        <form class=" mx-auto w-full  flex -mt-[10rem] ml-[10rem] gap-[8rem] items-center" enctype="multipart/form-data" method="post">
+        <form class="mx-auto w-full  flex flex-col sm:flex-row -mt-[10rem] mb-10 sm:ml-[10rem] sm:gap-[8rem] gap-[2rem] items-center" enctype="multipart/form-data" method="post">
             {% csrf_token %}
                 <div>
-                    <label {% if user.id == userData.id %} id="imgLabel"  for="imgInput" {% endif %} class="relative w-[20rem] h-[25rem] overflow-hidden mt-10 bg-white border-2 flex items-center justify-center">
+                    <label {% if user.id == userData.id %} id="imgLabel"  for="imgInput" {% endif %} class="relative sm:w-[20rem] sm:h-[25rem] w-[15rem] h-[20rem] overflow-hidden mt-10 bg-white border-2 flex items-center justify-center">
                      <img id="userImage" alt="user image" src="{{ userData.profileImage.url }}" class="w-full h-full object-cover">
                     </label>
                     <input type="file" id="imgInput" name="profileImage" class="hidden"
                     onchange="document.getElementById('userImage').src = window.URL.createObjectURL(this.files[0])">
                 </div>
-                <div class="bg-white rounded-lg p-8 border-2 w-[45rem] py-[2rem] flex flex-col gap-6 items-center">
+                <div class="bg-white rounded-lg p-8 border-2 sm:w-[45rem] w-[20rem] py-[2rem] flex flex-col gap-6 items-center">
                   <div class="relative z-0 w-full mb-5 group">
                       <input type="text" readonly name="name" id="name" class="bg-slate-400 block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" disabled value="{{ userData.name }}" placeholder=" " required />
                       <label for="name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>

@@ -18,7 +18,7 @@
             }
         </style>
     </head>
-<body>
+<body class="w-full overflow-x-hidden">
             {% include 'components/header_component.html' %}
              <nav aria-label="Breadcrumb" class="flex -mt-12 mb-12 h-max w-max translate-x-28 hidden sm:m-0 sm:ml-4 sm:block">
                 <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
@@ -73,10 +73,10 @@
                 </li>
               </ol>
             </nav>
-    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16  px-[8rem]">
+    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16 px-4 sm:px-[8rem]">
         {# gallery section#}
         <div>
-            <div id="gallery" class="relative w-[40rem]" data-carousel="static">
+            <div id="gallery" class="relative sm:w-[40rem]" data-carousel="static">
                 <!-- Carousel wrapper -->
                 <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
                      <!-- Item  -->
@@ -106,8 +106,8 @@
             </div>
 
             <div class="flex items-center w-full justify-between">
-                <p>Done At : {{ task.dateOfTask }}</p>
-                <p>Published At : {{ task.publishedDate }}</p>
+                <p class="text-sm">Done At : {{ task.dateOfTask }}</p>
+                <p class="text-sm">Published At : {{ task.publishedDate }}</p>
             </div>
         </div>
 {#        anther components #}
@@ -121,7 +121,7 @@
             <form method="post" class="flex flex-col gap-4 mt-20">
                 {% csrf_token %}
                 <label for="comment">Comment </label>
-                <input maxlength="120" id="comment" name="comment" type="text" class="w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
+                <input maxlength="120" id="comment" name="comment" type="text" class="sm:w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
                 <button formaction="{% url 'addComment' task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
             </form>
 {#            comments section #}
@@ -131,9 +131,9 @@
             <!-- Comment Header -->
             <div class="flex items-center space-x-3">
                 <!-- Avatar -->
-                <div class="w-8 h-8">
+                <a href="{% url 'userProfile' comment.user.id %}" class="w-8 h-8">
                     <img class="rounded-full" alt="user logo" src="{{ comment.user.profileImage.url }}"/>
-                </div>
+                </a>
                 <!-- User Info -->
                 <p class="text-sm font-medium">{{ comment.user.name }}</p>
                 <p class="text-gray-400 text-xs">{{comment.time_ago}}</p>
@@ -169,7 +169,7 @@
 {% endfor %}
 
 <!-- Pagination Controls -->
-<div class="pagination mt-4">
+<div class="pagination mt-4 mb-10">
     <span class="text-gray-500">
         {% if task_comments.has_previous %}
             <a href="?page=1" class="px-3 py-1">First</a>
