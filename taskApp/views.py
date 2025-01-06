@@ -143,6 +143,7 @@ def adminHome(request):
             admin.first_name = admin.first_name[:7] + "..."
             context = {
                 'admin': admin,
+                'totalStudents': statics.totalStudents,
                 'totalTasks': statics.totalTasks,
                 'totalAmbassadors': statics.totalAmbassadors,
                 'totalStudySupports': statics.totalStudySupports,
