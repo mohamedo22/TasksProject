@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
+from .Functions.Functions import contextOfDashBoard
 from .models import *
 from datetime import *
 from django.contrib import messages
@@ -137,24 +139,8 @@ def studentHome(request):
 def adminHome(request):
     createStatics()
     if request.user.is_superuser:
-        admin = SuperAdmin.objects.get(id=request.user.id)
-        statics = Statistics.objects.first()  # Use first() to avoid IndexError
-        if statics:
-            admin.first_name = admin.first_name[:7] + "..."
-            context = {
-                'admin': admin,
-                'totalStudents': statics.totalStudents,
-                'totalTasks': statics.totalTasks,
-                'totalAmbassadors': statics.totalAmbassadors,
-                'totalStudySupports': statics.totalStudySupports,
-                'totalProfessionalSupports': statics.totalProfessionalSupports,
-                'totalIntermediaries': statics.totalIntermediaries,
-                'totalStudySupportsTasks': statics.totalStudySupportsTasks,
-                'totalIntermediariesTasks': statics.totalIntermediariesTasks,
-                'totalAmbassadorsTasks': statics.totalAmbassadorsTasks,
-                'totalProfessionalSupportsTasks': statics.totalProfessionalSupportsTasks,
-                'totalGuests': statics.totalGuests,
-            }
+        context = contextOfDashBoard(request)
+        if context  is not None:
             return render(request, 'Admin_HomePage.html', context)
         else:
             return HttpResponse("Statistics not found")

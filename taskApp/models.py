@@ -17,6 +17,7 @@ class UserProfile(User):
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)
     profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultUserProfile.png',null=True)
+    totalTasks = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 class SuperAdmin(User):
