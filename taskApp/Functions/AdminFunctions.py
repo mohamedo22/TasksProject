@@ -1,5 +1,7 @@
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
+from TasksProject import settings
 from taskApp.models import SuperAdmin, Statistics , UserProfile
 def contextOfDashBoard(request):
     admin = SuperAdmin.objects.get(id=request.user.id)
@@ -42,3 +44,11 @@ def contextOfDashBoard(request):
         return context
     else:
         return  None
+def sendEmailMessage(message,title,email):
+    send_mail(
+        subject=title,
+        message=message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[email],
+        fail_silently=False,
+    )

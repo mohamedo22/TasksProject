@@ -6,7 +6,7 @@ from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from .Functions.Functions import contextOfDashBoard
+from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
 from .models import *
 from datetime import *
 from django.contrib import messages
@@ -146,7 +146,12 @@ def adminHome(request):
             return HttpResponse("Statistics not found")
     else:
         return redirect(studentHome)
-
+def sendEmailFromAdmin(request):
+    userEmail = request.POST.get('userEmail')
+    message = request.POST.get('emailmessage')
+    title = request.POST.get('emailTitle')
+    sendEmailMessage(message,title,userEmail)
+    return redirect(adminHome)
 @login_required
 def studentTasks(request , id):
     current_user = UserProfile.objects.get(id=request.user.id)
