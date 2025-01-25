@@ -19,7 +19,6 @@ def createStatics():
     try:
         statics = Statistics.objects.first()  # Get the first record or None if not available
         if statics is None:
-            print("No statistics found, creating new statistics...")# If no record exists, create new statistics
             newStatics = Statistics()
             newStatics.totalAdmins = SuperAdmin.objects.all().count()
             newStatics.totalTasks = Task.objects.all().count()
@@ -146,12 +145,21 @@ def adminHome(request):
             return HttpResponse("Statistics not found")
     else:
         return redirect(studentHome)
+@login_required
+def ManageUsers(request):
+    if request.user.is_superuser:
+        allUsers = UserProfile.objects.all()
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8]+"..."
+        context = {'users':allUsers,'admin':currentAdmin}
+        return render(request , 'DashBoard_ManageUsers.html',context)
 def sendEmailFromAdmin(request):
-    userEmail = request.POST.get('userEmail')
-    message = request.POST.get('emailmessage')
-    title = request.POST.get('emailTitle')
-    sendEmailMessage(message,title,userEmail)
-    return redirect(adminHome)
+    if request.method == 'POST':
+        userEmail = request.POST.get('userEmail')
+        message = request.POST.get('emailmessage')
+        title = request.POST.get('emailTitle')
+        sendEmailMessage(message,title,userEmail)
+        return redirect(adminHome)
 @login_required
 def studentTasks(request , id):
     current_user = UserProfile.objects.get(id=request.user.id)
