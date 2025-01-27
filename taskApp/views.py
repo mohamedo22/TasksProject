@@ -149,6 +149,10 @@ def adminHome(request):
 def ManageUsers(request):
     if request.user.is_superuser:
         allUsers = UserProfile.objects.all()
+        if request.method == 'POST':
+            search = request.POST.get('search')
+            if search:
+                allUsers = UserProfile.objects.filter(name__icontains=search)
         currentAdmin = SuperAdmin.objects.get(id=request.user.id)
         currentAdmin.first_name = currentAdmin.first_name[:8]+"..."
         context = {'users':allUsers,'admin':currentAdmin}
@@ -160,6 +164,42 @@ def sendEmailFromAdmin(request):
         title = request.POST.get('emailTitle')
         sendEmailMessage(message,title,userEmail)
         return redirect(adminHome)
+@login_required
+def editUserFromAdmin(request):
+    if request.method == 'POST':
+        userId = request.POST.get('userId')
+        userName = request.POST.get('name')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        nationalId = request.POST.get('nationalId')
+        userPermission = request.POST.get('userPermission')
+        grade = request.POST.get('grade')
+        firstStudentRule = request.POST.get('firstStudentRule')
+        secondStudentRule = request.POST.get('secondStudentRule')
+        adminRule = request.POST.get('adminRule')
+        profileImage = request.FILES.get('profileImage')
+        ###############
+        user = UserProfile.objects.get(id=userId)
+        user.name = userName
+        user.phone = phone
+        user.address = address
+        user.nationalId = nationalId
+        user.userPermission = userPermission
+        user.grade = grade
+        user.firstStudentRule = firstStudentRule
+        user.secondStudentRule = secondStudentRule
+        user.adminRule = adminRule
+        if profileImage:
+            user.profileImage = profileImage
+        user.save()
+        return redirect(ManageUsers)
+@login_required
+def deleteUser(request):
+    if request.method == 'POST':
+        userId = request.POST.get('userId')
+        user = UserProfile.objects.get(id=userId)
+        user.delete()
+        return redirect(ManageUsers)
 @login_required
 def studentTasks(request , id):
     current_user = UserProfile.objects.get(id=request.user.id)
@@ -309,3 +349,4 @@ def addCommentLike(request,taskId,id):
             comment.likesCount += 1
             comment.save()
             return redirect(taskDetails, taskId)
+

@@ -9,7 +9,8 @@ def contextOfDashBoard(request):
     users = UserProfile.objects.all()
     for user in users:
         user.totalTasks = user.task_set.all().count()
-        user.grade = user.grade.lower()
+        if user.grade:
+            user.grade = user.grade.lower()
     paginator = Paginator(list(users), 5)
     page_number = request.GET.get('page', 1)
     usersEmail = []
