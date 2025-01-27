@@ -15,7 +15,7 @@
     </head>
     <body>
         <div x-data="setup()" :class="{ 'dark': isDark }">
-    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
 
       <!-- Header -->
       <div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
@@ -68,8 +68,7 @@
                 <span class="inline-flex justify-center items-center ml-4">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                 </span>
-                <span class="ml-2 text-sm tracking-wide truncate">Board</span>
-                <span class="hidden md:block px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-blue-500 bg-indigo-50 rounded-full">New</span>
+                <span class="ml-2 text-sm tracking-wide truncate">Manage Users</span>
               </a>
             </li>
             <li>
@@ -118,28 +117,31 @@
         </div>
       </div>
       <!-- ./Sidebar -->
-        <div class="w-full flex p-[2rem]">
+        <div class=" flex ml-14  mt-24 mb-10 md:ml-80 sm:mr-2 flex-wrap gap-8">
             {% for user in users %}
-            	<form method="post">
+            	<form method="post" class="flex gap-8 items-center bg-white px-10 py-4">
                 {% csrf_token %}
-                    <div>
-                        <input style="outline: none;border: none;" name="name" value="{{ user.name }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.phone }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.location }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.nationalId }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.userPermission }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.grade }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.firstStudentRule }}">
-                        <input style="outline: none;border: none;" name="name" value="{{ user.secondStudentRule }}">
+                    <div class="flex flex-col gap-2 bg-white p-2">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.name }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.phone }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.location }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.nationalId }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.userPermission }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.grade }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.firstStudentRule }}">
+                        <input class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.secondStudentRule }}">
                     </div>
-                    <div class="">
-                        <img alt="User image" src="{{ user.profileImage.url }}">
+                    <div>
+                        <label for="imgLabel{{ user.id }}" class="relative sm:w-[8rem] sm:h-[12rem] overflow-hidden mt-10 bg-white border-2 flex items-center justify-center">
+                            <img id="userImage{{ user.id }}" alt="user image" src="{{ user.profileImage.url }}" class="w-full h-full object-cover">
+                        </label>
+                        <input type="file" id="imgLabel{{ user.id }}" name="profileImage" class="hidden"
+                        onchange="document.getElementById('userImage{{ user.id }}').src = window.URL.createObjectURL(this.files[0])">
                     </div>
                 </form>
             {% endfor %}
-            
+
         </div>
-      </div>
     </div>
   </div>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
