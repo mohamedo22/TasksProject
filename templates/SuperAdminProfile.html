@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Add Super Admin</title>
+        <link rel="icon" href="{%static 'Images/PHP logo.png' %}">
+        <link rel="stylesheet" href="{%static 'Styles/DashBoardStyle.css' %}">
+        <link rel="stylesheet" href="{%static 'Styles/superAdminProfile.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div x-data="setup()" :class="{ 'dark': isDark }">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+
+      <!-- Header -->
+      {% include 'components/dashBoardHeader.html' %}
+      <!-- ./Header -->
+
+      <!-- Sidebar -->
+      {% include 'components/sideBar.html' %}
+      <!-- ./Sidebar -->
+        {% if updated == "True" %}
+            <script>
+                 const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: "success",
+                    title: "Changes Saved Successfully"
+                  });
+            </script>
+            {% elif created == "False" %}
+                <script>
+                     const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.onmouseenter = Swal.stopTimer;
+                          toast.onmouseleave = Swal.resumeTimer;
+                        }
+                      });
+                      Toast.fire({
+                        icon: "error",
+                        title: "User Is not Added Successfully"
+                      });
+                </script>
+        {% endif %}
+        <form  method="post" enctype="multipart/form-data" class="ml-24 mt-[5rem] mb-10 md:ml-[30rem] w-[15rem] sm:w-[35rem]  grid grid-cols-6 gap-6">
+                  {% csrf_token %}
+                  <div class="col-span-6 rounded-full">
+                    <label for="profileImage" class="cursor-pointer">
+                        <div id="ImageAvatar" class="relative m-auto w-[25vw] h-[25vw] p-1 rounded-full overflow-hidden ring-2 ring-gray-300 ">
+                            <img id="profileImg" class="object-cover dark:ring-gray-500" src="{{ admin.profileImage.url }}" alt="Bordered avatar">
+                        </div>
+                    </label>
+                    <input onchange="document.getElementById('profileImg').src = window.URL.createObjectURL(this.files[0])" name="profileImage" hidden="" id="profileImage" type="file" accept="image/*">
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">
+                      First Name
+                    </label>
+
+                    <input
+                            required
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      placeholder="Super Admin First Name"
+                      value="{{ admin.first_name }}"
+                      class="mt-1 w-full h-[2.5rem] px-4 outline-none rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">
+                      Last Name
+                    </label>
+
+                    <input
+                      value="{{ admin.last_name }}"
+                            required
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      placeholder="Super Admin Email"
+                      class="mt-1 w-full h-[2.5rem] px-4 outline-none rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                      Email
+                    </label>
+
+                    <input
+                      value="{{ admin.email }}"
+                            required
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Super Admin Email"
+                      class="h-[2.5rem] outline-none px-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="nationalId" class="block text-sm font-medium text-gray-700">
+                      National Id
+                    </label>
+
+                    <input
+                      value="{{ admin.nationalId }}"
+                            required
+                      type="text"
+                      id="nationalId"
+                      name="nationalId"
+                      placeholder="Super Admin National Id"
+                      class="h-[2.5rem] outline-none px-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div class="col-span-6">
+                    <label for="userName" class="block text-sm font-medium text-gray-700"> UserName </label>
+                    <input value="{{ admin.username }}" placeholder="Super Admin UserName" readonly id="userName" class="outline-none mt-1 w-full rounded-md border-gray-200 bg-gray-300 text-sm text-gray-700 shadow-sm p-4">
+                  </div>
+                  <div class="col-span-6 mt-6 sm:flex sm:items-center sm:gap-4">
+                    <button
+                      type="submit"
+                      class="w-full inline-block shrink-0 rounded-md border border-sky-600 bg-sky-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-blue-500"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                  <div class="col-span-6 mt-0 sm:flex sm:items-center sm:gap-4">
+                    <button
+                      formaction="{% url 'change_password' %}"
+                      type="submit"
+                      class="w-[100%] inline-block shrink-0 rounded-md border border-emerald-600 bg-emerald-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-emerald-600 focus:outline-none focus:ring active:text-blue-500"
+                    >
+                      change Password
+                    </button>
+                  </div>
+                </form>
+    </div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+
+    </body>
+</html>

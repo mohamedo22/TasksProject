@@ -29,6 +29,7 @@ def contextOfDashBoard(request):
             'admin': admin,
             'totalStudents': statics.totalStudents,
             'totalAdmins': statics.totalAdmins,
+            'totalUsers':UserProfile.objects.all().count(),
             'totalTasks': statics.totalTasks,
             'totalAmbassadors': statics.totalAmbassadors,
             'totalStudySupports': statics.totalStudySupports,

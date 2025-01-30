@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Add Users</title>
+        <link rel="icon" href="{%static 'Images/PHP logo.png' %}">
+        <link rel="stylesheet" href="{%static 'Styles/DashBoardStyle.css' %}">
+        <link rel="stylesheet" href="{%static 'Styles/SwitchStyle.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div x-data="setup()" :class="{ 'dark': isDark }">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+
+      <!-- Header -->
+      {% include 'components/dashBoardHeader.html' %}
+      <!-- ./Header -->
+
+      <!-- Sidebar -->
+      {% include 'components/sideBar.html' %}
+      <!-- ./Sidebar -->
+        {% if created == "True" %}
+            <script>
+                 const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: "success",
+                    title: "User Added Successfully"
+                  });
+            </script>
+            {% elif created == "False" %}
+                <script>
+                     const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.onmouseenter = Swal.stopTimer;
+                          toast.onmouseleave = Swal.resumeTimer;
+                        }
+                      });
+                      Toast.fire({
+                        icon: "error",
+                        title: "User Is not Added Successfully"
+                      });
+                </script>
+        {% endif %}
+        <form  method="post" enctype="multipart/form-data" class="ml-20 mt-[5rem] mb-10 md:ml-[30rem] w-[18rem] sm:w-[35rem] overflow-hidden grid grid-cols-6 gap-6 overflow-y-auto">
+                  {% csrf_token %}
+                 <div class="col-span-6 sm:col-span-3">
+                    <label for="name" class="block text-sm font-medium text-gray-700">
+                      Name
+                    </label>
+
+                    <input
+                            required
+                      type="text"
+                      id="name"
+                      name="name"
+                      placeholder="Student/Admin Name"
+                      class="mt-1 w-full h-[2.5rem] px-4 outline-none rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                 <div class="col-span-6 sm:col-span-3">
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                      Email
+                    </label>
+
+                    <input
+                            required
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Student/Admin Email"
+                      class="mt-1 w-full h-[2.5rem] px-4 outline-none rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">
+                      Phone
+                    </label>
+
+                    <input
+                            required
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      placeholder="Student/Admin Phone"
+                      class="h-[2.5rem] outline-none px-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+
+                  <div class="col-span-6">
+                    <label for="nationalId" class="block text-sm font-medium text-gray-700"> National Id </label>
+
+                    <input placeholder="Student/Admin National Id" required name="nationalId" id="nationalId" class="outline-none mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm p-4">
+                  </div>
+
+                  <div class="col-span-6 sm:col-span-3">
+                    <div>
+                          <label for="userPermission" class="block text-sm font-medium text-gray-900"> User Permission </label>
+
+                          <select
+                                  required
+                            name="userPermission"
+                            id="userPermission"
+                            class="mt-1.5 w-full rounded-lg h-10 p-2 border-gray-300 text-gray-700 sm:text-sm"
+                          >
+                            <option value="admin">Admin</option>
+                            <option value="student">Student</option>
+                          </select>
+                        </div>
+
+                  </div>
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="address" class="block text-sm font-medium text-gray-700">
+                      Address
+                    </label>
+
+                    <input
+                            required
+                      type="text"
+                      id="address"
+                      name="address"
+                      placeholder="address"
+                      class="h-[2.5rem] outline-none px-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div id="adminRoleContainer" class="col-span-6 sm:col-span-3">
+                    <label for="adminRole" class="block text-sm font-medium text-gray-700">
+                      Admin Role
+                    </label>
+
+                    <input
+                            required
+                      type="text"
+                      id="adminRole"
+                      name="adminRole"
+                      placeholder="Admin Role"
+                      class="h-[2.5rem] outline-none px-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
+                    />
+                  </div>
+                  <div id="gradeContainer" class="col-span-6 hidden sm:col-span-3">
+                    <div>
+                          <label for="grade" class="block text-sm font-medium text-gray-900"> Grade</label>
+
+                          <select
+                                  required
+                            name="grade"
+                            id="grade"
+                            class="mt-1.5 w-full rounded-lg h-10 p-2 border-gray-300 text-gray-700 sm:text-sm"
+                          >
+                            <option value="junior">Junior</option>
+                            <option value="wheeler">Wheeler</option>
+                            <option value="senior">Senior</option>
+                          </select>
+                        </div>
+
+                  </div>
+                  <div id="firstStudentRoleContainer" class="hidden col-span-6 sm:col-span-3">
+                    <div>
+                          <label for="firstStudentRole" class="block text-sm font-medium text-gray-900"> First Role</label>
+
+                          <select
+                                  required
+                            name="firstStudentRole"
+                            id="firstStudentRole"
+                            class="mt-1.5 w-full rounded-lg h-10 p-2 border-gray-300 text-gray-700 sm:text-sm"
+                          >
+                            <option value="AM">Ambassador</option>
+                            <option value="PS">Career Counselor</option>
+                            <option value="IN">Mediators</option>
+                            <option value="SS">Tutor</option>
+                          </select>
+                        </div>
+
+                  </div>
+                  <div id="secondStudentRoleContainer" class="hidden col-span-6 sm:col-span-3">
+                    <div>
+                          <label for="secondStudentRole" class="block text-sm font-medium text-gray-900"> Second Role</label>
+
+                          <select
+                                  required
+                            name="secondStudentRole"
+                            id="secondStudentRole"
+                            class="mt-1.5 w-full rounded-lg h-10 p-2 border-gray-300 text-gray-700 sm:text-sm"
+                          >
+                            <option value="AM">Ambassador</option>
+                            <option value="PS">Career Counselor</option>
+                            <option value="IN">Mediators</option>
+                            <option value="SS">Tutor</option>
+                          </select>
+                        </div>
+
+                  </div>
+                  <div class="col-span-6 mt-6 sm:flex sm:items-center sm:gap-4">
+                    <button
+                      type="submit"
+                      class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                    >
+                      Add User
+                    </button>
+                  </div>
+                </form>
+    </div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+    <script src="{% static 'Scripts/addUserDashBoard.js' %}"></script>
+    </body>
+</html>

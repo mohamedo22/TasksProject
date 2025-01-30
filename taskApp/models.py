@@ -20,6 +20,7 @@ class UserProfile(User):
     def __str__(self):
         return self.name
 class SuperAdmin(User):
+    nationalId = models.CharField(max_length=20,default=0)
     profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultAdminProfile.png')
     pass
 #### other Tables #######
@@ -45,7 +46,8 @@ class TaskImages(models.Model):
 
 class TaskComments(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE,null=True)
+    superAdmin = models.ForeignKey(SuperAdmin,on_delete=models.CASCADE,null=True)
     comment = models.TextField(max_length=2000)
     likesCount = models.IntegerField(default=0,null=True)
     publishedDate = models.DateTimeField(auto_now_add=True,null=True)

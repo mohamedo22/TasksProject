@@ -63,46 +63,18 @@
           });
     </script>
 {% endif %}
-        <div class="relative ml-14  mt-24 mb-20 md:ml-[17.5rem] sm:mr-2">
-            <div class=" flex flex-col sm:flex-row  flex-wrap gap-4">
+    <div class="relative ml-14  mt-24 mb-20 md:ml-[17.5rem] sm:mr-2">
+        <div class=" flex flex-col sm:flex-row  flex-wrap gap-2">
             {% for user in users %}
-            	<form  method="post" enctype="multipart/form-data" class="rounded   flex flex-col items-center gap-8 items-center bg-white px-10 py-4 overflow-hidden">
+            	<form  method="post" enctype="multipart/form-data" class="rounded   flex flex-col items-center gap-8 items-center bg-white px-10 py-4">
                 {% csrf_token %}
                 <div class="flex flex-col-reverse sm:flex-row  gap-8 items-center">
-                    <div class="flex flex-col gap-2 bg-white p-2">
+                    <div class="flex flex-col gap-6 bg-white p-2">
                         <input name="userId" value="{{ user.id }}" hidden>
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.name }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" value="{{ user.email }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="password" value="{{ user.password }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="phone" value="{{ user.phone }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="address" value="{{ user.location }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="nationalId" value="{{ user.nationalId }}">
-                        <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="userPermission">
-                            <option value="student" {% if user.userPermission == 'student' %} selected {% endif %}>Student</option>
-                            <option value="admin" {% if user.userPermission == 'admin' %} selected {% endif %}>Admin</option>
-                        </select>
-                    {% if user.userPermission == 'student' %}
-                    	<select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="grade">
-                            <option value="junior" {% if user.grade == 'junior' %} selected {% endif %}>Junior</option>
-                            <option value="wheeler" {% if user.grade == 'wheeler' %} selected {% endif %}>Wheeler</option>
-                            <option value="senior" {% if user.grade == 'senior' %} selected {% endif %}>senior</option>
-                        </select>
-                        <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="firstStudentRule">
-                            <option value="AM" {% if user.firstStudentRule == 'AM' %} selected {% endif %}>Ambassador</option>
-                            <option value="PS" {% if user.firstStudentRule == 'PS' %} selected {% endif %}>Career Counselor </option>
-                            <option value="IN" {% if user.firstStudentRule == 'IN' %} selected {% endif %}>Mediators</option>
-                            <option value="SS" {% if user.firstStudentRule == 'SS' %} selected {% endif %}>Tutor</option>
-                        </select>
-                        <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="secondStudentRule">
-                            <option value="AM" {% if user.secondStudentRule == 'AM' %} selected {% endif %}>Ambassador</option>
-                            <option value="PS" {% if user.secondStudentRule == 'PS' %} selected {% endif %}>Career Counselor </option>
-                            <option value="IN" {% if user.secondStudentRule == 'IN' %} selected {% endif %}>Mediators</option>
-                            <option value="SS" {% if user.secondStudentRule == 'SS' %} selected {% endif %}>Tutor</option>
-                        </select>
-                        {% else %}
-                            <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="adminRule" value="{{ user.adminRule }}">
-                    {% endif %}
-                    <label class="switch mt-6">
+                        <input required class="border-2 border-slate-500 rounded-md px-2 py-1 w-full"  style="outline: none; cursor: not-allowed" readonly disabled name="userName" value="{{ user.username }}">
+                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.first_name }}">
+                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" value="{{ user.email }}">
+                        <label class="switch">
                             <input {% if user.is_active %} checked {% endif %} name="isActive" type="checkbox">
                             <div class="slider">
                                 <div class="circle">
@@ -122,7 +94,7 @@
                     </div>
 
                     <div>
-                        <label for="imgLabel{{ user.id }}" class="object-cover w-auto rounded-t-lg h-[15rem] md:h-auto md:w-48 md:rounded-none md:rounded-s-lg relative sm:w-[12rem] sm:h-[12rem] overflow-hidden mt-10 bg-white  flex items-center justify-center">
+                        <label for="imgLabel{{ user.id }}" class="object-cover w-auto rounded-t-lg h-[15rem] md:h-96 md:w-48 md:rounded-none md:rounded-s-lg relative sm:w-[12rem] sm:h-[12rem] overflow-hidden mt-10 bg-white  flex items-center justify-center">
                             <img id="userImage{{ user.id }}" alt="user image" src="{{ user.profileImage.url }}" class="w-full h-full object-cover">
                         </label>
                         <input value="{{ user.profileImage }}" type="file" id="imgLabel{{ user.id }}" name="profileImage" class="hidden"
@@ -130,14 +102,14 @@
                     </div>
                 </div>
                  <div>
-                     <button type="submit" formaction="{% url 'editUser' %}" class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">Save Changes</button>
-                    <button type="submit" formaction="{% url 'deleteUser'  %}" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete User</button>
+                     <button type="submit" formaction="{% url 'editSuperUser' %}" class="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900">Save Changes</button>
+                     <button type="submit" formaction="{% url 'deleteSuperUser'  %}" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete User</button>
                 </div>
                 </form>
             {% endfor %}
 
         </div>
-            <div class="flex col-span-4 mt-2 sm:mt-4 sm:justify-end" style="position: absolute;left: 0">
+        <div class="flex col-span-4 mt-2 sm:mt-4 sm:justify-end" style="position: absolute;left: 0">
                 <nav aria-label="Table navigation">
                 <ul class="inline-flex items-center">
                   <!-- Previous Button -->
@@ -203,8 +175,7 @@
                 </ul>
               </nav>
               </div>
-        </div>
-
+    </div>
     </div>
   </div>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>

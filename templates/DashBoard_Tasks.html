@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tasks Board</title>
+        <link rel="icon" href="{%static 'Images/PHP logo.png' %}">
+        <link rel="stylesheet" href="{%static 'Styles/DashBoardStyle.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div x-data="setup()" :class="{ 'dark': isDark }">
+            <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+
+                <!-- Header -->
+                {% include 'components/dashBoardHeader.html' %}
+                <!-- ./Header -->
+
+                <!-- Sidebar -->
+                {% include 'components/sideBar.html' %}
+                <!-- ./Sidebar -->
+                <div class=" ml-20   mt-24 mb-10 md:ml-80 sm:mr-2 h-max">
+                        <div class="grid sm:grid-cols-2  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[1rem] "
+                            style=" background: url('{% static "Images/backGStudentHome.png" %}') no-repeat center fixed; background-size: 30%;">
+                            {% if usersData %}
+                                {% for user in usersData %}
+                                <div  class="w-max h-max  flex items-center gap-2 p-1 rounded-lg transition-all duration-300  hover:border-violet-500 hover:bg-violet-200" style="backdrop-filter: blur(15px)">
+                                    <div class="bg-white shadow-lg rounded-xl p-4 w-64 flex items-center gap-4 ">
+
+                                       <a href="{% url 'userProfile' user.id %}">
+                                           <img src="{{ user.profileImage.url }}" alt="Profile Picture"
+                                             class="w-14 h-14 rounded-full object-cover" />
+                                       </a>
+                                        <div class="h-[2rem] w-[2px] bg-slate-400"></div>
+                                        <a href="{% url 'dashBoardStudentTasks' user.id %}">
+                                          <h3 class="text-gray-800 font-semibold text-lg">{{ user.name}}</h3>
+                                          <p class="text-gray-500 text-sm">{{ user.grade }}</p>
+                                        </a>
+                                  </div>
+
+                                </div>
+                            {% endfor %}
+                            {% else %}
+                                <script>
+                                Swal.fire({
+                                    text:"No Users Found!",
+                                    icon: "info",
+                                    showConfirmButton: true,
+                                    confirmButtonText: 'OK',
+                                    customClass: {
+                                        confirmButton: 'custom-button-class',
+                                    },
+                                });
+                                </script>
+                            {% endif %}
+                        </div>
+                        <div class="flex l-0 sm:l-[20rem] col-span-4 mt-2 sm:mt-4 sm:justify-end" style="position: absolute;bottom: 0;margin-bottom: 1.5rem">
+                            <nav aria-label="Table navigation">
+                            <ul class="inline-flex items-center">
+                              <!-- Previous Button -->
+                              {% if users.has_previous %}
+                              <li>
+                                <a href="?page={{ usersData.previous_page_number }}"
+                                   class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                   aria-label="Previous">
+                                  <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </a>
+                              </li>
+                              {% else %}
+                              <li>
+                                <button disabled class="px-3 py-1 rounded-md rounded-l-lg cursor-not-allowed opacity-50" aria-label="Previous">
+                                  <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </button>
+                              </li>
+                              {% endif %}
+
+                              <!-- Page Numbers -->
+                              {% for page in usersData.paginator.page_range %}
+                              <li>
+                                {% if page == usersData.number %}
+                                <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                  {{ page }}
+                                </button>
+                                {% else %}
+                                <a href="?page={{ page }}" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                  {{ page }}
+                                </a>
+                                {% endif %}
+                              </li>
+                              {% endfor %}
+
+                              <!-- Next Button -->
+                              {% if usersData.has_next %}
+                              <li>
+                                <a href="?page={{ usersData.next_page_number }}"
+                                   class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                   aria-label="Next">
+                                  <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </a>
+                              </li>
+                              {% else %}
+                              <li>
+                                <button disabled class="px-3 py-1 rounded-md rounded-r-lg cursor-not-allowed opacity-50" aria-label="Next">
+                                  <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </button>
+                              </li>
+                              {% endif %}
+                            </ul>
+                          </nav>
+                          </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+    </body>
+</html>

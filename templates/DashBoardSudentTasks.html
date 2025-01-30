@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tasks Board</title>
+        <link rel="icon" href="{%static 'Images/PHP logo.png' %}">
+        <link rel="stylesheet" href="{%static 'Styles/DashBoardStyle.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    </head>
+    <body>
+        <div x-data="setup()" :class="{ 'dark': isDark }">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+
+      <!-- Header -->
+      {% include 'components/dashBoardHeader.html' %}
+      <!-- ./Header -->
+
+      <!-- Sidebar -->
+    {% include 'components/sideBar.html' %}
+      <!-- ./Sidebar -->
+       <div class="ml-36 mt-24 mb-20 md:ml-80 sm:mr-0" style="position: relative">
+            <nav aria-label="Breadcrumb" class="flex hidden sm:block mb-6">
+              <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
+                <li class="flex items-center">
+                  <a
+                    href="{% url 'tasksBoard' %}"
+                    class="flex h-10 items-center gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="size-5 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+
+                    <span class="ms-1.5 text-xs text-white font-medium"> Board </span>
+                  </a>
+                </li>
+
+                <li class="relative flex items-center">
+                  <span
+                    class="absolute inset-y-0 -start-px h-10 w-4 bg-[#0EA5E9] [clip-path:_polygon(0_0,_0%_100%,_100%_50%)] rtl:rotate-180"
+                  >
+                  </span>
+
+                  <a
+                    href=""
+                    class="flex h-10 items-center bg-white pe-4 ps-8 text-xs font-medium transition hover:text-gray-900"
+                  >
+                    Tasks ({{ student.name }})
+                  </a>
+                </li>
+              </ol>
+            </nav>
+            <div class=" gap-[2rem] sm:translate-x-[0rem] -translate-x-[5rem]  sm:ml-0 grid sm:grid-cols-2">
+            {% if tasks %}
+                {% for task in tasks %}
+                <article class=" overflow-hidden rounded-lg w-[19rem] sm:w-[22rem] border border-gray-100 bg-white shadow-sm">
+                    <div id="controls-carousel-{{ forloop.counter }}" class="relative w-full" data-carousel="static">
+                        <!-- Carousel wrapper -->
+                        <div class="relative h-56 overflow-hidden rounded-lg md:h-78">
+                            {% for image in task.taskimages_set.all %}
+                            <div class="duration-700 ease-in-out {{ forloop.first|yesno:'block,hidden' }}" data-carousel-item>
+                                <img src="{{ image.image.url }}"
+                                     class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                                     alt="Task Image">
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Slider controls -->
+                        <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                                </svg>
+                                <span class="sr-only">Previous</span>
+                            </span>
+                        </button>
+                        <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                                <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                </svg>
+                                <span class="sr-only">Next</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="p-4 sm:p-6">
+                        <a href="{% url 'dashBoardTaskDetails' student.id  task.id %}">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                {{ task.title }}
+                            </h3>
+                        </a>
+
+                        <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
+                            {{ task.description }}
+                        </p>
+
+                        <a href="{% url 'dashBoardTaskDetails' student.id task.id %}" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                            Get More Details
+                            <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
+                                &rarr;
+                            </span>
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+                {% else %}
+                    <script>
+                    Swal.fire({
+                        text:"This Student Have No Task!",
+                        icon: "info",
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'custom-button-class',
+                        },
+                    });
+                    </script>
+            {% endif %}
+        </div>
+            <div class="flex col-span-4 mt-2 sm:mt-4 sm:justify-end" style="position: absolute;left: 0">
+                <nav aria-label="Table navigation">
+                <ul class="inline-flex items-center">
+                  <!-- Previous Button -->
+                  {% if tasks.has_previous %}
+                  <li>
+                    <a href="?page={{ tasks.previous_page_number }}"
+                       class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                       aria-label="Previous">
+                      <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </a>
+                  </li>
+                  {% else %}
+                  <li>
+                    <button disabled class="px-3 py-1 rounded-md rounded-l-lg cursor-not-allowed opacity-50" aria-label="Previous">
+                      <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </button>
+                  </li>
+                  {% endif %}
+
+                  <!-- Page Numbers -->
+                  {% for page in tasks.paginator.page_range %}
+                  <li>
+                    {% if page == tasks.number %}
+                    <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                      {{ page }}
+                    </button>
+                    {% else %}
+                    <a href="?page={{ page }}" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                      {{ page }}
+                    </a>
+                    {% endif %}
+                  </li>
+                  {% endfor %}
+
+                  <!-- Next Button -->
+                  {% if tasks.has_next %}
+                  <li>
+                    <a href="?page={{ tasks.next_page_number }}"
+                       class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                       aria-label="Next">
+                      <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                        <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </a>
+                  </li>
+                  {% else %}
+                  <li>
+                    <button disabled class="px-3 py-1 rounded-md rounded-r-lg cursor-not-allowed opacity-50" aria-label="Next">
+                      <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                        <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </button>
+                  </li>
+                  {% endif %}
+                </ul>
+              </nav>
+              </div>
+        </div>
+    </div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+    </body>
+</html>

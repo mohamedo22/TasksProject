@@ -4,28 +4,34 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Student Tasks Page</title>
-        <link rel="icon" href="{%static 'images/logo.png'%}">
-        <link rel="stylesheet" href="{% static 'Styles/StudentTask.css' %}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Tasks Board</title>
+        <link rel="icon" href="{%static 'Images/PHP logo.png' %}">
+        <link rel="stylesheet" href="{%static 'Styles/DashBoardStyle.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-        <style>
-            #av-filter{
-                display: none;
-            }
-        </style>
     </head>
-<body class="w-full overflow-x-hidden">
-            {% include 'components/header_component.html' %}
-             <nav aria-label="Breadcrumb" class="flex -mt-12 mb-12 h-max w-max translate-x-28 hidden sm:m-0 sm:ml-4 sm:block">
+    <body>
+        <div x-data="setup()" :class="{ 'dark': isDark }">
+    <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+
+      <!-- Header -->
+      {% include 'components/dashBoardHeader.html' %}
+      <!-- ./Header -->
+
+      <!-- Sidebar -->
+    {% include 'components/sideBar.html' %}
+      <!-- ./Sidebar -->
+       <div class="ml-14 mt-24 mb-20 md:ml-80 sm:mr-0" style="position: relative">
+            <nav aria-label="Breadcrumb" class="flex hidden sm:block mb-6">
                 <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
 
                 <li class="flex items-center">
                   <a
-                    href="{% url 'student_home' %}"
+                    href="{% url 'tasksBoard' %}"
                     class="flex h-10 items-center gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
                   >
                     <svg
@@ -49,13 +55,13 @@
 
                 <li class="flex items-center">
                   <a
-                    href="{% url 'student_tasks' user.id %}"
+                    href="{% url 'dashBoardStudentTasks' student.id %}"
                     class="flex h-10 items-center border-l-2 border-white gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z" />
                     </svg>
-                    <span class="ms-1.5 text-xs text-white font-medium"> Tasks </span>
+                    <span class="ms-1.5 text-xs text-white font-medium"> Tasks ({{ student.name }}) </span>
                   </a>
                 </li>
                 <li class="relative flex items-center">
@@ -73,9 +79,9 @@
                 </li>
               </ol>
             </nav>
-    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16 px-4 sm:px-[8rem]">
+            <div class="container flex flex-col items-start gap-[8rem] my-16 px-4 sm:px-[8rem]">
         {# gallery section#}
-        <div>
+            <div>
             <div id="gallery" class="relative sm:w-[40rem]" data-carousel="static">
                 <!-- Carousel wrapper -->
                 <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
@@ -122,20 +128,20 @@
                 {% csrf_token %}
                 <label for="comment">Comment </label>
                 <input maxlength="120" id="comment" name="comment" type="text" class="sm:w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
-                <button formaction="{% url 'addComment' task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
+                <button formaction="{% url 'addComment' student.id task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
             </form>
 {#            comments section #}
             {% for comment in task_comments %}
-        <div class="mt-24">
+    <div class="mt-24">
         <div class="bg-white flex flex-col gap-4 rounded-lg shadow-md p-4 max-w-md">
             <!-- Comment Header -->
             <div class="flex items-center space-x-3">
                 <!-- Avatar -->
-                <a href="{% url 'userProfile' comment.user.id %}" class="rounded-full w-8 h-8 overflow-hidden">
+                <a {% if comment.isSuperAdmin %}href="#"{% else %}href="{% url 'userProfile' comment.user.id %}"{% endif %}  class="rounded-full w-10 h-10 overflow-hidden">
                     <img class="" alt="user logo" src="{{ comment.user.profileImage.url }}"/>
                 </a>
                 <!-- User Info -->
-                <p class="text-sm font-medium">{{ comment.user.name }}</p>
+                <p class="text-sm font-medium">{{ comment.commenterName}} {% if comment.isSuperAdmin %}<span class="text-xs text-purple-400">(Super Admin)</span>{% endif %}</p>
                 <p class="text-gray-400 text-xs">{{comment.time_ago}}</p>
             </div>
 
@@ -149,7 +155,7 @@
                 <p class=" hover:text-gray-700">{{ comment.likes_count }} Likes</p>
                 <form method="post">
                 {% csrf_token %}
-                    <button type="submit" formaction="{% url 'addCommentLike' task.id comment.id  %}">
+                    <button type="submit" formaction="{% url 'addCommentLike' student.id task.id comment.id  %}">
                         <a class="cursor-pointer">
                             {% if comment.liked %}
                             	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-5.0 -10.0 110.0 135.0" class="size-10">
@@ -188,6 +194,9 @@
 
         </div>
     </div>
-    {% include 'components/footer_phone.html' %}
-</body>
+        </div>
+    </div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
+    </body>
 </html>

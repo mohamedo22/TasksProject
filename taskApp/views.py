@@ -1,4 +1,8 @@
 from tkinter.font import names
+
+from django.contrib.admin.templatetags.admin_list import pagination
+from django.contrib.auth.hashers import check_password
+from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -7,12 +11,13 @@ from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
+from .Functions.SharedFunctions import returnUsers
 from .models import *
 from datetime import *
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, logout
 from django.contrib.auth import authenticate as auth_authenticate
 # Create your views here.
 def createStatics():
@@ -41,10 +46,26 @@ def createStatics():
             newStatics.save()
 
         else:
-            print("Statistics already exist.")
+            statics.totalAdmins = SuperAdmin.objects.all().count()
+            statics.totalTasks = Task.objects.all().count()
+            statics.totalAmbassadorsTasks = Task.objects.filter(initiativeType='AM').count()
+            statics.totalStudySupportsTasks = Task.objects.filter(initiativeType='SS').count()
+            statics.totalProfessionalSupportsTasks = Task.objects.filter(initiativeType='PS').count()
+            statics.totalIntermediariesTasks = Task.objects.filter(initiativeType='IN').count()
+            statics.totalStudents = UserProfile.objects.filter(userPermission='student').count()
+            statics.totalAdmins = UserProfile.objects.filter(userPermission='admin').count()
+            query = Q()
+            query = Q(firstStudentRule='SS') | Q(secondStudentRule='SS')
+            statics.totalStudySupports = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='AM') | Q(secondStudentRule='AM')
+            statics.totalAmbassadors = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='PS') | Q(secondStudentRule='PS')
+            statics.totalProfessionalSupports = UserProfile.objects.filter(query).count()
+            query = Q(firstStudentRule='IN') | Q(secondStudentRule='IN')
+            statics.totalIntermediaries = UserProfile.objects.filter(query).count()
+            statics.save()
     except Exception as e:
         print(f"Error creating statistics: {e}")
-        # Optionally log the error for further investigation
 
 def send_login_email(email):
     """Sends an email notification for successful login."""
@@ -99,25 +120,7 @@ def login(request):
     return render(request, 'LoginPage.html')
 def studentHome(request):
     createStatics()
-    users = UserProfile.objects.filter(userPermission='student')
-    if request.method == 'POST':
-            filters = request.POST.getlist('filter')
-            search = request.POST.get('search')
-            if filters:
-                query = Q()
-                for filter in filters:
-                    query |= Q(firstStudentRule=filter) | Q(secondStudentRule=filter)
-                users = users.filter(query)
-            if search:
-                users = UserProfile.objects.filter(name__icontains=search)
-    for user in users:
-        user.name = user.name[:7]+"..."
-        for task in user.task_set.all():
-            task.title = task.title[:14] + "..."
-
-    context = {
-        'usersData':users ,
-    }
+    context = returnUsers(request)
     if request.user.is_superuser:
         return redirect(adminHome)
     if request.user.is_authenticated:
@@ -135,6 +138,34 @@ def studentHome(request):
             statics.save()
         return render(request,'Student_HomePage.html',context)
 @login_required
+def changePassword(request):
+    context={"wrongPassword":"","notMatch":""}
+    if request.method == 'POST':
+        userId = request.user.id
+        try:
+            user = UserProfile.objects.get(id = userId)
+        except UserProfile.DoesNotExist:
+            user = SuperAdmin.objects.get(id=userId)
+        oldPassword = request.POST.get('oldPassword',None)
+        newPassword = request.POST.get('newPassword',None)
+        confirmPassword = request.POST.get('confirmPassword',None)
+        if oldPassword and newPassword and confirmPassword is not None:
+            if not user.password == oldPassword:
+                context["wrongPassword"]="True"
+                return render(request, 'change_password.html', context)
+            if newPassword != confirmPassword:
+                context["notMatch"] = "True"
+                return render(request, 'change_password.html', context)
+            user.password = oldPassword
+            user.save()
+            for session in Session.objects.all():
+                data = session.get_decoded()
+                if data.get('_auth_user_id') == str(userId):
+                    session.delete()
+            logout(request)
+            return redirect(login)
+    return render(request,'change_password.html',)
+@login_required
 def adminHome(request):
     createStatics()
     if request.user.is_superuser:
@@ -146,7 +177,7 @@ def adminHome(request):
     else:
         return redirect(studentHome)
 @login_required
-def ManageUsers(request):
+def ManageUsers(request,**kwargs):
     if request.user.is_superuser:
         allUsers = UserProfile.objects.all()
         if request.method == 'POST':
@@ -155,8 +186,52 @@ def ManageUsers(request):
                 allUsers = UserProfile.objects.filter(name__icontains=search)
         currentAdmin = SuperAdmin.objects.get(id=request.user.id)
         currentAdmin.first_name = currentAdmin.first_name[:8]+"..."
+        page = request.GET.get('page',1)
+        paginator = Paginator(allUsers,6)
+        try:
+            allUsers = paginator.page(page)
+        except PageNotAnInteger:
+            allUsers = paginator.page(1)
+        except EmptyPage:
+            allUsers = paginator.page(paginator.num_pages)
         context = {'users':allUsers,'admin':currentAdmin}
+        update = kwargs.get('update', None)
+        deleted = kwargs.get('deleted', None)
+        if update is not None:
+            context["updated"] = "True"
+            update = None
+        elif deleted is not None:
+            context["deleted"] = "True"
+            deleted = None
         return render(request , 'DashBoard_ManageUsers.html',context)
+@login_required
+def ManageSuperUsers(request,**kwargs):
+    if request.user.is_superuser:
+        allSuperUsers = SuperAdmin.objects.all()
+        if request.method == 'POST':
+            search = request.POST.get('search')
+            if search:
+                allUsers = SuperAdmin.objects.filter(first_name__icontains=search)
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8]+"..."
+        update = kwargs.get('update',None)
+        deleted = kwargs.get('deleted',None)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(allSuperUsers, 6)
+        try:
+            allSuperUsers = paginator.page(page)
+        except PageNotAnInteger:
+            allSuperUsers = paginator.page(1)
+        except EmptyPage:
+            allSuperUsers = paginator.page(paginator.num_pages)
+        context = {'users':allSuperUsers,'admin':currentAdmin}
+        if update is not None:
+            context["updated"] = "True"
+            update = None
+        elif deleted is not None:
+            context["deleted"] = "True"
+            deleted = None
+        return render(request , 'DashBoard_SuperUsers.html',context)
 def sendEmailFromAdmin(request):
     if request.method == 'POST':
         userEmail = request.POST.get('userEmail')
@@ -166,40 +241,284 @@ def sendEmailFromAdmin(request):
         return redirect(adminHome)
 @login_required
 def editUserFromAdmin(request):
-    if request.method == 'POST':
-        userId = request.POST.get('userId')
-        userName = request.POST.get('name')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        nationalId = request.POST.get('nationalId')
-        userPermission = request.POST.get('userPermission')
-        grade = request.POST.get('grade')
-        firstStudentRule = request.POST.get('firstStudentRule')
-        secondStudentRule = request.POST.get('secondStudentRule')
-        adminRule = request.POST.get('adminRule')
-        profileImage = request.FILES.get('profileImage')
-        ###############
-        user = UserProfile.objects.get(id=userId)
-        user.name = userName
-        user.phone = phone
-        user.address = address
-        user.nationalId = nationalId
-        user.userPermission = userPermission
-        user.grade = grade
-        user.firstStudentRule = firstStudentRule
-        user.secondStudentRule = secondStudentRule
-        user.adminRule = adminRule
-        if profileImage:
-            user.profileImage = profileImage
-        user.save()
-        return redirect(ManageUsers)
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            userId = request.POST.get('userId')
+            userName = request.POST.get('name')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            phone = request.POST.get('phone')
+            address = request.POST.get('address')
+            nationalId = request.POST.get('nationalId')
+            userPermission = request.POST.get('userPermission')
+            grade = request.POST.get('grade')
+            firstStudentRule = request.POST.get('firstStudentRule')
+            secondStudentRule = request.POST.get('secondStudentRule')
+            adminRule = request.POST.get('adminRule')
+            isActive = request.POST.get('isActive','off')
+            profileImage = request.FILES.get('profileImage')
+            ###############
+            user = UserProfile.objects.get(id=userId)
+            if userName: user.name = userName
+            if email: user.email = email
+            if password: user.password = password
+            if phone: user.phone = phone
+            if address:user.address = address
+            if nationalId:user.nationalId = nationalId
+            if userPermission: user.userPermission = userPermission
+            if grade:user.grade = grade
+            if firstStudentRule:user.firstStudentRule = firstStudentRule
+            if secondStudentRule: user.secondStudentRule = secondStudentRule
+            if adminRule:user.adminRule = adminRule
+            if profileImage:
+                user.profileImage = profileImage
+            if isActive == "on":
+                user.is_active = True
+            else:
+                user.is_active = False
+            user.save()
+        return ManageUsers(request,update='True')
+@login_required
+def superAdminProfile(request):
+    if request.user.is_superuser:
+        currentAdmin = SuperAdmin.objects.get(id = request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8]
+        context={
+            "admin":currentAdmin
+        }
+        if request.method == 'POST':
+            userId = request.user.id
+            firstName = request.POST.get('firstName')
+            lastName = request.POST.get('lastName')
+            email = request.POST.get('email')
+            nationalId = request.POST.get('nationalId')
+            profileImage = request.FILES.get('profileImage')
+            ###############
+            user = SuperAdmin.objects.get(id=userId)
+            if firstName : user.first_name = firstName
+            if lastName : user.last_name = lastName
+            if email : user.email = email
+            if nationalId : user.nationalId = nationalId
+            if profileImage:
+                user.profileImage = profileImage
+            user.save()
+            currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+            currentAdmin.first_name = currentAdmin.first_name[:8]
+            context['admin']=currentAdmin
+            context['updated']="True"
+        return render(request,'SuperAdminProfile.html',context)
+@login_required
+def editSuperUserFromAdmin(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            userId = request.POST.get('userId')
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            isActive = request.POST.get('isActive','off')
+            profileImage = request.FILES.get('profileImage')
+            ###############
+            user = SuperAdmin.objects.get(id=userId)
+            user.first_name = name
+            user.email = email
+            if profileImage:
+                user.profileImage = profileImage
+            if isActive == "on":
+                user.is_active = True
+            else:
+                user.is_active = False
+            user.save()
+        return ManageSuperUsers(request,update='True')
 @login_required
 def deleteUser(request):
     if request.method == 'POST':
         userId = request.POST.get('userId')
         user = UserProfile.objects.get(id=userId)
-        user.delete()
-        return redirect(ManageUsers)
+        if user:
+            user.delete()
+    return ManageUsers(request, deleted='True')
+@login_required
+def deleteSuperUser(request):
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            userId = request.POST.get('userId')
+            user = SuperAdmin.objects.get(id=userId)
+            if user:
+                user.delete()
+        return ManageSuperUsers(request,deleted='True')
+@login_required
+def dashBoardAddUser(request):
+    if request.user.is_superuser:
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
+        context = {
+            "admin": currentAdmin
+        }
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            email = request.POST.get('email')
+            phone = request.POST.get('phone')
+            nationalId = request.POST.get('nationalId')
+            userPermission = request.POST.get('userPermission')
+            address = request.POST.get('address')
+            adminRole = request.POST.get('adminRole')
+            grade = request.POST.get('grade')
+            firstStudentRole = request.POST.get('firstStudentRole')
+            secondStudentRole = request.POST.get('secondStudentRole')
+            newUser = UserProfile(
+                name = name,
+                username=name+nationalId,
+                email=email,
+                phone= phone,
+                nationalId=nationalId,
+                userPermission=userPermission,
+                location=address,
+                password=nationalId
+            )
+            lock = False
+            if name and email and phone and nationalId and userPermission and address is not None:
+                lock = True
+            if userPermission =='admin':
+                if adminRole:
+                    newUser.adminRule = adminRole
+                else:
+                    lock = False
+            else:
+                if grade and firstStudentRole and secondStudentRole:
+                    newUser.grade = grade
+                    newUser.firstStudentRule = firstStudentRole
+                    newUser.secondStudentRule = secondStudentRole
+                else:
+                    lock=False
+            if lock:
+                newUser.save()
+                context["created"]="True"
+            else:
+                context["created"] = "False"
+        return render(request,'DashBoard_AddUser.html',context)
+@login_required
+def dashBoardAddSuperUser(request):
+    if request.user.is_superuser:
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
+        context = {
+            "admin": currentAdmin
+        }
+        if request.method == 'POST':
+            firstName = request.POST.get('firstName')
+            lastName = request.POST.get('lastName')
+            email = request.POST.get('email')
+            nationalId = request.POST.get('nationalId')
+            image = request.FILES.get('image')
+            if firstName and lastName and email and nationalId and image is not None:
+                newUser = SuperAdmin(
+                    first_name = firstName,
+                    last_name=lastName,
+                    username=(firstName+nationalId).replace(" ",""),
+                    email=email,
+                    nationalId=nationalId,
+                    password=nationalId,
+                    profileImage=image,
+                    is_superuser=True,
+                    is_staff=True
+                )
+                newUser.save()
+                context["created"]="True"
+            else:
+                context["created"] = "False"
+        return render(request,'DashBoard_AddSuperUser.html',context)
+@login_required
+def dashBoardTasks(request):
+    if request.user.is_superuser:
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
+        context = returnUsers(request)
+        context['admin'] = currentAdmin
+        return  render(request,'DashBoard_Tasks.html',context)
+@login_required
+def dashBoardStudentTasks(request,Id):
+    if request.user.is_superuser:
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
+        student = UserProfile.objects.get(id=Id)
+        tasks = Task.objects.filter(user=student)
+        if request.method == 'POST':
+            search = request.POST.get('search')
+            if search:
+                tasks = Task.objects.filter(title__icontains=search)
+        for task in tasks:
+            if len(task.title) > 52:
+                task.title = task.title[:52] + "..."
+            if len(task.description) > 148:
+                task.description = task.description[:148] + "..."
+        page = request.GET.get('page', 1)
+        paginator = Paginator(tasks, 6)
+        try:
+            tasks = paginator.page(page)
+        except PageNotAnInteger:
+            tasks = paginator.page(1)
+        except EmptyPage:
+            tasks = paginator.page(paginator.num_pages)
+        context = {
+            'student':student,
+            'tasks': tasks,
+            'admin':currentAdmin
+        }
+        return render(request, 'DashBoardSudentTasks.html', context)
+@login_required
+def dashBoardTaskDetiles(request,studenId,taskId):
+    if request.user.is_superuser:
+        task_sp = Task.objects.get(id=taskId)
+        currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
+        task_sp.user.name = task_sp.user.name[:20] + "..."
+        task_comments = task_sp.taskcomments_set.all()
+        comments = []
+        for comment in task_comments:
+            # Calculate time difference
+            time_diff = datetime.now(timezone.utc) - comment.publishedDate
+            if time_diff.days > 0:
+                time_ago = f"{time_diff.days} day{'s' if time_diff.days > 1 else ''} ago"
+            elif time_diff.seconds >= 3600:
+                hours = time_diff.seconds // 3600
+                time_ago = f"{hours} hour{'s' if hours > 1 else ''} ago"
+            elif time_diff.seconds >= 60:
+                minutes = time_diff.seconds // 60
+                time_ago = f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+            else:
+                time_ago = "Just now"
+            if comment.superAdmin:
+                user = comment.superAdmin
+                commenterName = comment.superAdmin.first_name
+                isSuperAdmin = True
+            else:
+                user = comment.user
+                commenterName = comment.user.name
+                isSuperAdmin = False
+            comments.append({
+                "id": comment.id,
+                "liked": request.session.get(f"{comment.id}"),
+                "comment_text": comment.comment,
+                "likes_count": comment.likesCount,
+                "user": user,
+                "commenterName":commenterName,
+                "time_ago": time_ago,
+                "isSuperAdmin":isSuperAdmin
+            })
+        page = request.GET.get('page', 1)
+        paginator = Paginator(comments, 2)
+        try:
+            comments = paginator.page(page)
+        except PageNotAnInteger:
+            comments = paginator.page(1)
+        except EmptyPage:
+            comments = paginator.page(paginator.num_pages)
+        context = {
+            'admin':currentAdmin,
+            'task': task_sp,
+            'task_comments': comments,
+            'student':UserProfile.objects.get(id=studenId)
+        }
+        return render(request, 'dashBoardTaskDetiles.html', context)
 @login_required
 def studentTasks(request , id):
     current_user = UserProfile.objects.get(id=request.user.id)
@@ -327,15 +646,22 @@ def deleteTask(request,id):
     task = Task.objects.get(id=id)
     task.delete()
     return redirect(studentTasks,request.user.id)
-def addComment(request,id):
+def addComment(request,studentId,taskId):
     if request.method == 'POST':
-        task = Task.objects.get(id=id)
+        task = Task.objects.get(id=taskId)
         comment = request.POST.get('comment')
-        commenter = UserProfile.objects.get(id=request.user.id)
-        newComment = TaskComments(task=task,comment=comment,user=commenter)
-        newComment.save()
-        return redirect(taskDetails,id)
-def addCommentLike(request,taskId,id):
+        if request.user.is_superuser:
+            commenter = SuperAdmin.objects.get(id=request.user.id)
+            newComment = TaskComments(task=task, comment=comment, superAdmin=commenter)
+            newComment.save()
+        else:
+            commenter = UserProfile.objects.get(id=request.user.id)
+            newComment = TaskComments(task=task, comment=comment, user=commenter)
+            newComment.save()
+        if request.user.is_superuser:
+            return redirect(dashBoardTaskDetiles,studentId,taskId)
+        return redirect(taskDetails,taskId)
+def addCommentLike(request,studentId,taskId,id):
     if request.method == 'POST':
         comment = TaskComments.objects.get(id=id)
         commentLiked = request.session.get(f'{comment.id}',False)
@@ -343,10 +669,14 @@ def addCommentLike(request,taskId,id):
             comment.likesCount-=1
             comment.save()
             request.session[f'{comment.id}'] = False
-            return redirect(taskDetails,taskId)
+            if request.user.is_superuser:
+                return redirect(dashBoardTaskDetiles, studentId,taskId)
+            return redirect(taskDetails, taskId)
         else:
             request.session[f'{comment.id}'] = True
             comment.likesCount += 1
             comment.save()
+            if request.user.is_superuser:
+                return redirect(dashBoardTaskDetiles,studentId,taskId)
             return redirect(taskDetails, taskId)
 
