@@ -1,5 +1,3 @@
-from tkinter.font import names
-
 from django.contrib.admin.templatetags.admin_list import pagination
 from django.contrib.auth.hashers import check_password
 from django.contrib.sessions.models import Session
@@ -9,7 +7,6 @@ from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
 from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
 from .Functions.SharedFunctions import returnUsers
 from .models import *
@@ -519,11 +516,11 @@ def dashBoardTaskDetiles(request,studenId,taskId):
             'student':UserProfile.objects.get(id=studenId)
         }
         return render(request, 'dashBoardTaskDetiles.html', context)
-@login_required
+
 def studentTasks(request , id):
-    current_user = UserProfile.objects.get(id=request.user.id)
-    current_user.name = current_user.name[:7]+"..."
+
     student = UserProfile.objects.get(id=id)
+    student.name = student.name[:14]+"..."
     tasks = Task.objects.filter(user=student)
     users = UserProfile.objects.filter(userPermission='student')
     if request.method == 'POST':
@@ -546,12 +543,23 @@ def studentTasks(request , id):
             task.title = task.title[:52]+"..."
         if len(task.description) > 148:
             task.description = task.description[:148]+"..."
+    page = request.GET.get('page',1)
+    paginator = Paginator(tasks,9)
+    try:
+        tasks = paginator.page(page)
+    except PageNotAnInteger:
+        tasks = paginator.page(1)
+    except EmptyPage:
+        tasks = paginator.page(paginator.num_pages)
     context = {
         'student': student,
         'tasks': tasks,
         'usersData':users ,
-        'current_user':current_user,
     }
+    if request.user.is_authenticated:
+        current_user = UserProfile.objects.get(id=request.user.id)
+        current_user.name = current_user.name[:7]+"..."
+        context["current_user"] = current_user
     return render(request,'Student_Tasks.html',context)
 @login_required
 def addTask(request):
@@ -573,9 +581,10 @@ def addTask(request):
         return render(request,'AddTask.html' , {'added':"True"})
 
     return  render(request , 'AddTask.html', {'added':''})
-def taskDetails(request,id):
+def taskDetails(request,studentId,id):
     task_sp = Task.objects.get(id=id)
-    student = UserProfile.objects.get(id=request.user.id)
+    student = UserProfile.objects.get(id=studentId)
+    student.name =  student.name[:14]+"..." if len(student.name) > 14  else student.name
     users = UserProfile.objects.filter(userPermission='student')
     for user in users:
         user.name = user.name[:7] + "..."
@@ -598,13 +607,19 @@ def taskDetails(request,id):
             time_ago = f"{minutes} minute{'s' if minutes > 1 else ''} ago"
         else:
             time_ago = "Just now"
-
+        if comment.user:
+            commenter = comment.user
+            commenterName = comment.user.name[:10]+'...' if len(comment.user.name)>10 else comment.user.name
+        else:
+            commenter = comment.superAdmin
+            commenterName = comment.superAdmin.first_name[:10]+'...' if len(comment.superAdmin.first_name)>10 else comment.superAdmin.first_name
         comments.append({
             "id":comment.id,
             "liked": request.session.get(f"{comment.id}"),
             "comment_text": comment.comment,
             "likes_count": comment.likesCount,
-            "user": comment.user,
+            "user": commenter,
+            "commenterName":commenterName,
             "time_ago": time_ago,
         })
     page = request.GET.get('page', 1)
@@ -621,6 +636,10 @@ def taskDetails(request,id):
         'task':task_sp,
         'task_comments':comments,
     }
+    if request.user.is_authenticated:
+        currentUser = UserProfile.objects.get(id=request.user.id)
+        currentUser.name = currentUser.name[:7] + "..."
+        context["currentUser"] = currentUser
     return render(request,'TaskDetails.html' , context)
 def userProfile(request,id):
     user = UserProfile.objects.get(id=id)
@@ -660,7 +679,7 @@ def addComment(request,studentId,taskId):
             newComment.save()
         if request.user.is_superuser:
             return redirect(dashBoardTaskDetiles,studentId,taskId)
-        return redirect(taskDetails,taskId)
+        return redirect(taskDetails,studentId,taskId)
 def addCommentLike(request,studentId,taskId,id):
     if request.method == 'POST':
         comment = TaskComments.objects.get(id=id)
@@ -671,12 +690,12 @@ def addCommentLike(request,studentId,taskId,id):
             request.session[f'{comment.id}'] = False
             if request.user.is_superuser:
                 return redirect(dashBoardTaskDetiles, studentId,taskId)
-            return redirect(taskDetails, taskId)
+            return redirect(taskDetails,studentId, taskId)
         else:
             request.session[f'{comment.id}'] = True
             comment.likesCount += 1
             comment.save()
             if request.user.is_superuser:
                 return redirect(dashBoardTaskDetiles,studentId,taskId)
-            return redirect(taskDetails, taskId)
+            return redirect(taskDetails, studentId,taskId)
 

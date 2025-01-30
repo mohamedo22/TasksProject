@@ -141,7 +141,7 @@
                     <img class="" alt="user logo" src="{{ comment.user.profileImage.url }}"/>
                 </a>
                 <!-- User Info -->
-                <p class="text-sm font-medium">{{ comment.commenterName}} {% if comment.isSuperAdmin %}<span class="text-xs text-purple-400">(Super Admin)</span>{% endif %}</p>
+                <p class="text-sm font-medium">{{ comment.commenterName}} {% if comment.isSuperAdmin %}<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Super Admin</span>{% elif comment.user.userPermission == "admin" %}<span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Admin</span>{% endif %}</p>
                 <p class="text-gray-400 text-xs">{{comment.time_ago}}</p>
             </div>
 

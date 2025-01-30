@@ -18,8 +18,10 @@
             }
         </style>
     </head>
-<body class="w-full overflow-x-hidden">
-            {% include 'components/header_component.html' %}
+        <body class="w-full {% if not user.is_authenticated %}sm:pt-20{% endif %} overflow-x-hidden">
+            {% if user.is_authenticated %}
+                    {% include 'components/header_component.html' %}
+            {% endif %}
              <nav aria-label="Breadcrumb" class="flex -mt-12 mb-12 h-max w-max translate-x-28 hidden sm:m-0 sm:ml-4 sm:block">
                 <ol class="flex w-max h-max overflow-hidden rounded-lg border border-gray-200 text-gray-600">
 
@@ -49,13 +51,13 @@
 
                 <li class="flex items-center">
                   <a
-                    href="{% url 'student_tasks' user.id %}"
+                    href="{% url 'student_tasks' student.id %}"
                     class="flex h-10 items-center border-l-2 border-white gap-1.5 bg-[#0EA5E9] px-4 transition hover:text-gray-900"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z" />
                     </svg>
-                    <span class="ms-1.5 text-xs text-white font-medium"> Tasks </span>
+                    <span class="ms-1.5 text-xs text-white font-medium"> Tasks ({{ student.name }})</span>
                   </a>
                 </li>
                 <li class="relative flex items-center">
@@ -73,7 +75,7 @@
                 </li>
               </ol>
             </nav>
-    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16 px-4 sm:px-[8rem]">
+    <div class="container flex flex-col sm:flex-row items-start gap-[8rem] my-16 px-4 sm:px-[2.5rem]">
         {# gallery section#}
         <div>
             <div id="gallery" class="relative sm:w-[40rem]" data-carousel="static">
@@ -118,12 +120,14 @@
                 <p class="text-[#494848]">{{ task.description}} </p>
             </div>
 {#            comment input section #}
+        {% if user.is_authenticated %}
             <form method="post" class="flex flex-col gap-4 mt-20">
                 {% csrf_token %}
                 <label for="comment">Comment </label>
-                <input maxlength="120" id="comment" name="comment" type="text" class="sm:w-[30rem] p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
-                <button formaction="{% url 'addComment' task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
+                <input maxlength="50" id="comment" name="comment" type="text" class="sm:w-full p-6 h-[2rem] border-2 border-gray-200 rounded-lg" placeholder="Leave your comment here" />
+                <button formaction="{% url 'addComment' student.id  task.id %}" type="submit" class="bg-[#0EA5E9] text-white p-2 w-[8rem] rounded-lg">Comment</button>
             </form>
+        {% endif %}
 {#            comments section #}
             {% for comment in task_comments %}
         <div class="mt-24">
@@ -131,11 +135,11 @@
             <!-- Comment Header -->
             <div class="flex items-center space-x-3">
                 <!-- Avatar -->
-                <a href="{% url 'userProfile' comment.user.id %}" class="rounded-full w-8 h-8 overflow-hidden">
-                    <img class="" alt="user logo" src="{{ comment.user.profileImage.url }}"/>
+                <a {% if comment.user %} href="{% url 'userProfile' comment.user.id %}" {% else %} href="#" {% endif %}  class="rounded-full w-8 h-8 overflow-hidden">
+                    <img class="" alt="user logo"  src="{{ comment.user.profileImage.url }}"/>
                 </a>
                 <!-- User Info -->
-                <p class="text-sm font-medium">{{ comment.user.name }}</p>
+                <p class="text-sm font-medium">{{ comment.commenterName }} {% if comment.user.is_superuser %}<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Super Admin</span>{% elif comment.user.userPermission == "admin" %}<span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Admin</span>{% endif %} </p>
                 <p class="text-gray-400 text-xs">{{comment.time_ago}}</p>
             </div>
 
@@ -149,7 +153,7 @@
                 <p class=" hover:text-gray-700">{{ comment.likes_count }} Likes</p>
                 <form method="post">
                 {% csrf_token %}
-                    <button type="submit" formaction="{% url 'addCommentLike' task.id comment.id  %}">
+                    <button type="submit" formaction="{% url 'addCommentLike' student.id task.id comment.id  %}">
                         <a class="cursor-pointer">
                             {% if comment.liked %}
                             	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-5.0 -10.0 110.0 135.0" class="size-10">
@@ -168,26 +172,31 @@
     </div>
 {% endfor %}
 
-<!-- Pagination Controls -->
-<div class="pagination mt-4 mb-10">
-    <span class="text-gray-500">
-        {% if task_comments.has_previous %}
-            <a href="?page=1" class="px-3 py-1">First</a>
-            <a href="?page={{ task_comments.previous_page_number }}" class="px-3 py-1">&laquo; Previous</a>
-        {% endif %}
-    </span>
+            <!-- Pagination Controls -->
+            <div class="pagination mt-4 mb-10">
+                <span class="text-gray-500">
+                    {% if task_comments.has_previous %}
+                        <a href="?page=1" class="px-3 py-1">First</a>
+                        <a href="?page={{ task_comments.previous_page_number }}" class="px-3 py-1">&laquo; Previous</a>
+                    {% endif %}
+                </span>
 
-    <span class="text-gray-500">
-        {% if task_comments.has_next %}
-            <a href="?page={{ task_comments.next_page_number }}" class="px-3 py-1">Next &raquo;</a>
-            <a href="?page={{ task_comments.paginator.num_pages }}" class="px-3 py-1">Last</a>
-        {% endif %}
-    </span>
-</div>
+                <span class="text-gray-500">
+                    {% if task_comments.has_next %}
+                        <a href="?page={{ task_comments.next_page_number }}" class="px-3 py-1">Next &raquo;</a>
+                        <a href="?page={{ task_comments.paginator.num_pages }}" class="px-3 py-1">Last</a>
+                    {% endif %}
+                </span>
+            </div>
 
 
         </div>
     </div>
-    {% include 'components/footer_phone.html' %}
+        {% if user.is_authenticated %}
+                {% if userProfile.userPermission == "student" %}
+                    {% include 'components/footer_phone.html' %}
+                {% endif %}
+            {% endif %}
+
 </body>
 </html>

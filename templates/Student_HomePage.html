@@ -48,7 +48,7 @@
                   {% if user.task_set.all %}
                   	{% for task in user.task_set.all %}
                   		<li >
-                         <a href="{% url 'taskDetails' task.id %}" class="flex items-center gap-2 w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                         <a href="{% url 'taskDetails' task.user.id task.id %}" class="flex items-center gap-2 w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="9" stroke="#04C847" stroke-width="2"/>
                                 <path d="M8 12L11 15L16 9" stroke="#04C847" stroke-width="2"/>
@@ -72,7 +72,8 @@
         <img src="{% static 'Images/iats-logo.svg' %}" alt="IATS logo" class="size-24" />
         <img src="{% static 'Images/PHP-logo.png' %}" alt="PHP logo" class="size-12" />
     </div>
-    <div class="w-max mx-auto my-10" style="">
+
+    <div {% if not userProfile.userPermission == "student" %}style="visibility: hidden" {% endif %} class="w-max mx-auto my-10" >
           <div class="hidden sm:block">
             <div class="border-b border-gray-200">
               <nav class="-mb-px flex gap-20" aria-label="Tabs">
@@ -133,14 +134,14 @@
             <form method="POST" action="{% url 'logout' %}">
               {% csrf_token %}
               <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                <i class="fa-regular fa-circle-left mr-2 text-red-500"></i> Sign out
+                <i class="fa-solid fa-right-from-bracket mr-2" style="color: #f70202;"></i>  Sign out
               </button>
             </form>
             </div>
         </div>
         </div>
     {% endif %}
-        <div  class="flex relative gap-8 p-8">
+        <div  class="flex flex-col items-center relative gap-8 p-8">
           <!-- Availability Filter -->
           <div class="absolute w-max sm:right-[5rem] flex items-center gap-12">
             <details class="group [&_summary::-webkit-details-marker]:hidden">
@@ -213,7 +214,8 @@
           </div>
 
 {#            ######################}
-            <div class="grid sm:grid-cols-4 w-full  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[1rem] sm:px-[4rem] mt-20"
+        <div class="flex flex-col items-center -space-y-14 mb-20 sm:mb-0 md:-space-y-0 sm:gap-10">
+            <div class="grid sm:grid-cols-4 w-full  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[1rem] sm:px-[4rem] my-20"
                 style=" background: url('{% static "Images/backGStudentHome.png" %}') no-repeat center fixed; background-size: 30%;">
                 {% if usersData %}
                 	{% for user in usersData %}
@@ -247,11 +249,84 @@
                     </script>
                 {% endif %}
             </div>
+            {% if usersData.paginator.num_pages > 1 %}
+            	<div class="flex l-0 sm:l-[20rem] col-span-4 mt-2 sm:mt-4 sm:justify-end">
+                            <nav aria-label="Table navigation">
+                            <ul class="inline-flex items-center">
+                              <!-- Previous Button -->
+                              {% if usersData.has_previous %}
+                              <li>
+                                <a href="?page={{ usersData.previous_page_number }}"
+                                   class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                   aria-label="Previous">
+                                  <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </a>
+                              </li>
+                              {% else %}
+                              <li>
+                                <button disabled class="px-3 py-1 rounded-md rounded-l-lg cursor-not-allowed opacity-50" aria-label="Previous">
+                                  <svg aria-hidden="true" class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </button>
+                              </li>
+                              {% endif %}
+
+                              <!-- Page Numbers -->
+                              {% for page in usersData.paginator.page_range %}
+                              <li>
+                                {% if page == usersData.number %}
+                                <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                  {{ page }}
+                                </button>
+                                {% else %}
+                                <a href="?page={{ page }}" class="px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                  {{ page }}
+                                </a>
+                                {% endif %}
+                              </li>
+                              {% endfor %}
+
+                              <!-- Next Button -->
+                              {% if usersData.has_next %}
+                              <li>
+                                <a href="?page={{ usersData.next_page_number }}"
+                                   class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                   aria-label="Next">
+                                  <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </a>
+                              </li>
+                              {% else %}
+                              <li>
+                                <button disabled class="px-3 py-1 rounded-md rounded-r-lg cursor-not-allowed opacity-50" aria-label="Next">
+                                  <svg class="w-4 h-4 fill-current" aria-hidden="true" viewBox="0 0 20 20">
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                          clip-rule="evenodd" fill-rule="evenodd"></path>
+                                  </svg>
+                                </button>
+                              </li>
+                              {% endif %}
+                            </ul>
+                          </nav>
+                          </div>
+            {% endif %} 
+        </div>
+
 {#            #######################}
             {% if user.is_authenticated %}
-                {% include 'components/footer_phone.html' %}
+                {% if userProfile.userPermission == "student" %}
+                    {% include 'components/footer_phone.html' %}
+                {% endif %}
             {% endif %}
      <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
      <script src="{% static 'Scripts/StudentHome.js' %}"></script>
+
     </body>
 </html>
