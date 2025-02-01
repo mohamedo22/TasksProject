@@ -59,7 +59,7 @@
         <img src="{% static 'Images/iats-logo.svg' %}" alt="IATS logo" class="size-24" />
         <img src="{% static 'Images/PHP-logo.png' %}" alt="PHP logo" class="size-12" />
     </div>
-    <div {% if not userProfile.userPermission == "student" %}style="visibility: hidden" {% endif %} class="w-max mx-auto my-10 hidden sm:block ">
+    <div {% if not currentUser.userPermission == "student" %}style="visibility: hidden" {% endif %} class="w-max mx-auto my-10 hidden sm:block ">
           <div class="">
             <div class="border-b border-gray-200">
               <nav class="-mb-px flex gap-20" aria-label="Tabs">

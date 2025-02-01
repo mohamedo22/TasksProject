@@ -3,8 +3,8 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
-
 from taskApp.models import UserProfile
+import magic
 def returnUsers(request):
     users = UserProfile.objects.filter(userPermission='student')
     if request.method == 'POST':
@@ -36,13 +36,19 @@ def returnUsers(request):
         'usersData': users,
     }
     return context
-def compressImage(inputImage):
-    img = Image.open(inputImage)
-    img = img.convert("RGB")
-    img.thumbnail((300, 300))
+def compressImage(image):
+    mime = magic.Magic(mime=True)
+    file_type = mime.from_buffer(image.read())
+    image.seek(0)
+    if not file_type.startswith('image'):
+        return None
+    img = Image.open(image)
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
     img_io = BytesIO()
-    img.save(img_io, format='JPEG', quality=70)
+    img.save(img_io, format='JPEG', quality=85)
+    img_io.seek(0)
     compressed_image = InMemoryUploadedFile(
-        img_io, None, inputImage.name, 'image/jpeg', img_io.tell(), None
+        img_io, None, image.name, 'image/jpeg', img_io.tell(), None
     )
     return compressed_image

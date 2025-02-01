@@ -79,6 +79,16 @@
         {# gallery section#}
         <div>
             <div id="gallery" class="relative sm:w-[40rem]" data-carousel="static">
+                {% if user.id == task.user.id or currentUser.userPermission == "admin" %}
+                	<a href="{% url 'editTask' task.id %}" style="background-color: rgba(0, 0, 0, 0.40);right: 0" class="absolute z-[100] w-12 py-2 rounded text-center">
+                        <i class="fa-regular fa-pen-to-square" style="color: #FFD43B;"></i>
+                    </a>
+                    <form method="post" style="background-color: rgba(0, 0, 0, 0.40);right: 0;" class="absolute z-[100] w-12 py-2 rounded top-[3rem] text-center">
+                        {% csrf_token %}
+                        <input hidden name="taskId" value="{{ task.id }}">
+                        <button type="submit" formaction="{% url 'deleteTask' %}"> <i class="fa-solid fa-trash-can" style="color: #ff0000;"></i></button>
+                    </form>
+                {% endif %} 
                 <!-- Carousel wrapper -->
                 <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
                      <!-- Item  -->
@@ -112,14 +122,17 @@
                 <p class="text-sm">Published At : {{ task.publishedDate }}</p>
             </div>
         </div>
-{#        anther components #}
+        {#anther components #}
         <div class="w-full overflow-hidden">
-{#            info section#}
+        {#info section#}
             <div class="flex flex-col gap-6">
                 <h1 class="font-bold text-black text-[2rem] w-[40rem]">{{ task.title }} </h1>
                 <p class="text-[#494848]">{{ task.description}} </p>
+                <p class="flex gap-4 text-[#494848]"><span class="font-semibold">Initiative Place: </span><span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-purple-900 dark:text-purple-300">{{ task.initiativePlace}}</span></p>
+                <p class="flex gap-4 text-[#494848]"><span class="font-semibold">Initiative Type: </span><span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-pink-900 dark:text-pink-300">{% if task.initiativeType == "SS" %}Tutor{% elif task.initiativeType == "PS" %}Career Counselor{% elif task.initiativeType == "AM" %}Ambassadors{% else %}Mediators{% endif %}</span></p>
+                <p class="flex gap-4 text-[#494848]"><span class="font-semibold">Beneficiaries:</span> <span>{{ task.studentsName }}</span></p>
             </div>
-{#            comment input section #}
+        {#comment input section #}
         {% if user.is_authenticated %}
             <form method="post" class="flex flex-col gap-4 mt-20">
                 {% csrf_token %}

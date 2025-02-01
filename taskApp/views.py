@@ -1,12 +1,9 @@
 import os
-from django.contrib.admin.templatetags.admin_list import pagination
-from django.contrib.auth.hashers import check_password
 from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render , redirect
-from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
 from .Functions.SharedFunctions import returnUsers, compressImage
@@ -483,6 +480,7 @@ def dashBoardTaskDetiles(request,studenId,taskId):
         currentAdmin = SuperAdmin.objects.get(id=request.user.id)
         currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
         task_sp.user.name = task_sp.user.name[:20] + "..."
+        task_sp.studentsName = task_sp.studentsName.replace("\r", ", ")
         task_comments = task_sp.taskcomments_set.all()
         comments = []
         for comment in task_comments:
@@ -580,22 +578,94 @@ def studentTasks(request , id):
 def addTask(request):
     if request.method == 'POST':
         user = UserProfile.objects.get(id=request.user.id)
-        title = request.POST.get('title')
-        initiativePlace = request.POST.get('initiativePlace')
-        description = request.POST.get('description')
-        initiativeType = request.POST.get('initiativeType')
-        dateOfTask = request.POST.get('dateOfTask')
-        formatted_date = datetime.strptime(dateOfTask, '%m/%d/%Y').strftime('%Y-%m-%d')
-        studentsName = request.POST.getlist('studentsName')
-        initiativeImages = request.FILES.getlist('initiativeImages')
-        task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
-        task.save()
-        for image in initiativeImages:
-                newImage = TaskImages(task=task,image=compressImage(image))
-                newImage.save()
-        return render(request,'AddTask.html' , {'added':"True"})
+        if user.userPermission == "student":
+            title = request.POST.get('title')
+            initiativePlace = request.POST.get('initiativePlace')
+            description = request.POST.get('description')
+            initiativeType = request.POST.get('initiativeType')
+            dateOfTask = request.POST.get('dateOfTask')
+            formatted_date = datetime.strptime(dateOfTask, '%m/%d/%Y').strftime('%Y-%m-%d')
+            studentsName = request.POST.get('studentsName')
+            initiativeImages = request.FILES.getlist('initiativeImages')
+            task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
+            task.save()
+            for image in initiativeImages:
+                    newImage = TaskImages(task=task,image=compressImage(image))
+                    newImage.save()
+            return render(request,'AddTask.html' , {'added':"True"})
 
     return  render(request , 'AddTask.html', {'added':''})
+@login_required
+def editTask(request,taskId):
+    task = Task.objects.get(id=taskId)
+    if not request.user.is_superuser:
+        user = UserProfile.objects.get(id = request.user.id)
+    else:
+        user = None
+    if request.method == 'POST':
+        if task.user.id == request.user.id or request.user.is_superuser:
+            title = request.POST.get('title')
+            initiativePlace = request.POST.get('initiativePlace')
+            description = request.POST.get('description')
+            initiativeType = request.POST.get('initiativeType')
+            dateOfTask = request.POST.get('dateOfTask')
+            formatted_date = datetime.strptime(dateOfTask, '%m/%d/%Y').strftime('%Y-%m-%d')
+            studentsName = request.POST.get('studentsName')
+            ###########################
+            task.title = title
+            task.initiativePlace = initiativePlace
+            task.description = description
+            task.initiativeType = initiativeType
+            task.dateOfTask = formatted_date
+            task.studentsName = studentsName
+            task.save()
+            return render(request,'editTask.html' , {'updated':"True",'task':task})
+        elif (user and user.userPermission == "admin"):
+            title = request.POST.get('title')
+            initiativePlace = request.POST.get('initiativePlace')
+            description = request.POST.get('description')
+            initiativeType = request.POST.get('initiativeType')
+            dateOfTask = request.POST.get('dateOfTask')
+            formatted_date = datetime.strptime(dateOfTask, '%m/%d/%Y').strftime('%Y-%m-%d')
+            studentsName = request.POST.get('studentsName')
+            ###########################
+            task.title = title
+            task.initiativePlace = initiativePlace
+            task.description = description
+            task.initiativeType = initiativeType
+            task.dateOfTask = formatted_date
+            task.studentsName = studentsName
+            task.save()
+            return render(request, 'editTask.html', {'updated': "True", 'task': task})
+    return  render(request , 'editTask.html', {'updated':'','task':task})
+
+
+@login_required
+def deleteTask(request):
+    if request.method == 'POST':
+        if not request.user.is_superuser:
+            user = UserProfile.objects.get(id=request.user.id)
+        else:
+            user = None
+        taskId = request.POST.get('taskId')
+        try:
+            task = Task.objects.get(id=taskId)
+        except Task.DoesNotExist:
+            return redirect("some_error_page")
+        if task.user.id == request.user.id or  request.user.is_superuser:
+            for taskImage in task.taskimages_set.all():
+                if os.path.exists(taskImage.image.path):
+                    os.remove(taskImage.image.path)
+            task.delete()
+            return redirect(login)
+        elif (user and user.userPermission == "admin"):
+            for taskImage in task.taskimages_set.all():
+                if os.path.exists(taskImage.image.path):
+                    os.remove(taskImage.image.path)
+            task.delete()
+            return redirect(login)
+
+    return redirect(login)
 def taskDetails(request,studentId,id):
     task_sp = Task.objects.get(id=id)
     student = UserProfile.objects.get(id=studentId)
@@ -606,6 +676,7 @@ def taskDetails(request,studentId,id):
         for task in user.task_set.all():
             task.title = task.title[:14] + "..."
     task_sp.user.name = task_sp.user.name[:20] + "..."
+    task_sp.studentsName = task_sp.studentsName.replace("\r",", ")
     student.name = student.name[:7] + "..."
     task_comments = task_sp.taskcomments_set.all()
     comments = []
@@ -678,10 +749,6 @@ def userProfile(request,id):
             user.save()
             return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
     return render(request,'UserProfile.html' , {'userData':user , "updated":""})
-def deleteTask(request,id):
-    task = Task.objects.get(id=id)
-    task.delete()
-    return redirect(studentTasks,request.user.id)
 def addComment(request,studentId,taskId):
     if request.method == 'POST':
         task = Task.objects.get(id=taskId)
