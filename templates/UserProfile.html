@@ -150,7 +150,18 @@
                         <label for="location" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address</label>
                     </div>
                   </div>
-                     {% if userData.id == user.id %} <button type="submit" class=" tracking-widest text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save Changes</button> {% endif %}
+                     {% if userData.id == user.id %}
+                         <div class="w-full flex flex-col gap-6 md:gap-0 md:flex-row justify-between">
+                             <button type="submit" class=" tracking-widest text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-12 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save Changes</button>
+                             <button
+                                  formaction="{% url 'change_password' %}"
+                                  type="submit"
+                                  class=" inline-block shrink-0 rounded-md border border-emerald-600 bg-emerald-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-emerald-600 focus:outline-none focus:ring active:text-blue-500"
+                                >
+                                  change Password
+                             </button>
+                         </div>
+                     {% endif %}
                 </div>
         </form>
 </body>

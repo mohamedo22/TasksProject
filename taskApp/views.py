@@ -1,3 +1,4 @@
+import os
 from django.contrib.admin.templatetags.admin_list import pagination
 from django.contrib.auth.hashers import check_password
 from django.contrib.sessions.models import Session
@@ -8,7 +9,7 @@ from django.shortcuts import render , redirect
 from django.template.defaultfilters import lower
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
-from .Functions.SharedFunctions import returnUsers
+from .Functions.SharedFunctions import returnUsers, compressImage
 from .models import *
 from datetime import *
 from django.contrib import messages
@@ -89,7 +90,7 @@ def login(request):
         check = "false"
         try:
             user = UserProfile.objects.get(email=email, password=password)
-            if user:
+            if user and user.is_active:
                 auth_login(request, user)
                 if remember_me == 'on':
                     request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
@@ -103,7 +104,7 @@ def login(request):
         except UserProfile.DoesNotExist:
             try:
                 superAdmin = SuperAdmin.objects.get(email=email,password=password)
-                if superAdmin:
+                if superAdmin and superAdmin.is_active:
                     auth_login(request, superAdmin)
                     remember_me = request.POST.get('rememberMy', None)
                     if remember_me:
@@ -139,22 +140,26 @@ def changePassword(request):
     context={"wrongPassword":"","notMatch":""}
     if request.method == 'POST':
         userId = request.user.id
-        try:
-            user = UserProfile.objects.get(id = userId)
-        except UserProfile.DoesNotExist:
-            user = SuperAdmin.objects.get(id=userId)
+        print("user id: ",userId)
         oldPassword = request.POST.get('oldPassword',None)
         newPassword = request.POST.get('newPassword',None)
         confirmPassword = request.POST.get('confirmPassword',None)
         if oldPassword and newPassword and confirmPassword is not None:
+            try:
+                user = UserProfile.objects.get(id=userId)
+                print("get user: ", user.name)
+            except UserProfile.DoesNotExist:
+                print("get admin")
+                user = SuperAdmin.objects.get(id=userId)
             if not user.password == oldPassword:
                 context["wrongPassword"]="True"
                 return render(request, 'change_password.html', context)
             if newPassword != confirmPassword:
                 context["notMatch"] = "True"
                 return render(request, 'change_password.html', context)
-            user.password = oldPassword
+            user.password = newPassword
             user.save()
+            print("password changed successfully:  " , user.password)
             for session in Session.objects.all():
                 data = session.get_decoded()
                 if data.get('_auth_user_id') == str(userId):
@@ -268,7 +273,9 @@ def editUserFromAdmin(request):
             if secondStudentRule: user.secondStudentRule = secondStudentRule
             if adminRule:user.adminRule = adminRule
             if profileImage:
-                user.profileImage = profileImage
+                oldImage = user.profileImage.path
+                user.profileImage = compressImage(profileImage)
+                os.remove(oldImage)
             if isActive == "on":
                 user.is_active = True
             else:
@@ -297,7 +304,9 @@ def superAdminProfile(request):
             if email : user.email = email
             if nationalId : user.nationalId = nationalId
             if profileImage:
-                user.profileImage = profileImage
+                oldImage = user.profileImage.path
+                user.profileImage = compressImage(profileImage)
+                os.remove(oldImage)
             user.save()
             currentAdmin = SuperAdmin.objects.get(id=request.user.id)
             currentAdmin.first_name = currentAdmin.first_name[:8]
@@ -318,7 +327,9 @@ def editSuperUserFromAdmin(request):
             user.first_name = name
             user.email = email
             if profileImage:
-                user.profileImage = profileImage
+                oldImage = user.profileImage.path
+                user.profileImage = compressImage(profileImage)
+                os.remove(oldImage)
             if isActive == "on":
                 user.is_active = True
             else:
@@ -331,7 +342,9 @@ def deleteUser(request):
         userId = request.POST.get('userId')
         user = UserProfile.objects.get(id=userId)
         if user:
+            profileImage = user.profileImage.path
             user.delete()
+            os.remove(profileImage)
     return ManageUsers(request, deleted='True')
 @login_required
 def deleteSuperUser(request):
@@ -340,7 +353,9 @@ def deleteSuperUser(request):
             userId = request.POST.get('userId')
             user = SuperAdmin.objects.get(id=userId)
             if user:
+                profileImage = user.profileImage.path
                 user.delete()
+                os.remove(profileImage)
         return ManageSuperUsers(request,deleted='True')
 @login_required
 def dashBoardAddUser(request):
@@ -414,7 +429,7 @@ def dashBoardAddSuperUser(request):
                     email=email,
                     nationalId=nationalId,
                     password=nationalId,
-                    profileImage=image,
+                    profileImage=compressImage(image),
                     is_superuser=True,
                     is_staff=True
                 )
@@ -576,7 +591,7 @@ def addTask(request):
         task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
         task.save()
         for image in initiativeImages:
-                newImage = TaskImages(task=task,image=image)
+                newImage = TaskImages(task=task,image=compressImage(image))
                 newImage.save()
         return render(request,'AddTask.html' , {'added':"True"})
 
@@ -657,7 +672,9 @@ def userProfile(request,id):
             if phone is not None:
                 user.phone = phone
             if profileImage is not None:
-                user.profileImage = profileImage
+                old_image_path = user.profileImage.path
+                user.profileImage = compressImage(profileImage)
+                os.remove(old_image_path)
             user.save()
             return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
     return render(request,'UserProfile.html' , {'userData':user , "updated":""})

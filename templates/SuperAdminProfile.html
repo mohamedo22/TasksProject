@@ -136,15 +136,15 @@
                     <label for="userName" class="block text-sm font-medium text-gray-700"> UserName </label>
                     <input value="{{ admin.username }}" placeholder="Super Admin UserName" readonly id="userName" class="outline-none mt-1 w-full rounded-md border-gray-200 bg-gray-300 text-sm text-gray-700 shadow-sm p-4">
                   </div>
-                  <div class="col-span-6 mt-6 sm:flex sm:items-center sm:gap-4">
+                  <div class="col-span-6 sm:col-span-3 mt-6 sm:flex sm:items-center sm:gap-4">
                     <button
                       type="submit"
-                      class="w-full inline-block shrink-0 rounded-md border border-sky-600 bg-sky-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-blue-500"
+                      class="w-[100%] inline-block shrink-0 rounded-md border border-sky-600 bg-sky-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-sky-600 focus:outline-none focus:ring active:text-blue-500"
                     >
                       Save Changes
                     </button>
                   </div>
-                  <div class="col-span-6 mt-0 sm:flex sm:items-center sm:gap-4">
+                  <div class="col-span-6 sm:col-span-3 sm:mt-6 sm:flex sm:items-center sm:gap-4">
                     <button
                       formaction="{% url 'change_password' %}"
                       type="submit"

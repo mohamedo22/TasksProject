@@ -1,3 +1,6 @@
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 
@@ -33,3 +36,13 @@ def returnUsers(request):
         'usersData': users,
     }
     return context
+def compressImage(inputImage):
+    img = Image.open(inputImage)
+    img = img.convert("RGB")
+    img.thumbnail((300, 300))
+    img_io = BytesIO()
+    img.save(img_io, format='JPEG', quality=70)
+    compressed_image = InMemoryUploadedFile(
+        img_io, None, inputImage.name, 'image/jpeg', img_io.tell(), None
+    )
+    return compressed_image
