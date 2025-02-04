@@ -65,17 +65,18 @@
 {% endif %}
     <div class="relative ml-14  mt-24 mb-20 md:ml-[17.5rem] sm:mr-2">
         <div class=" flex flex-col sm:flex-row  flex-wrap gap-2">
-            {% for user in users %}
+            {% for superAdmin in users %}
+                {% if user.id != superAdmin.id%}
             	<form  method="post" enctype="multipart/form-data" class="rounded   flex flex-col items-center gap-8 items-center bg-white px-10 py-4">
                 {% csrf_token %}
                 <div class="flex flex-col-reverse sm:flex-row  gap-8 items-center">
                     <div class="flex flex-col gap-6 bg-white p-2">
-                        <input name="userId" value="{{ user.id }}" hidden>
-                        <input required class="border-2 border-slate-500 rounded-md px-2 py-1 w-full"  style="outline: none; cursor: not-allowed" readonly disabled name="userName" value="{{ user.username }}">
-                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.first_name }}">
-                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" value="{{ user.email }}">
+                        <input name="userId" value="{{ superAdmin.id }}" hidden>
+                        <input required class="border-2 border-slate-500 rounded-md px-2 py-1 w-full"  style="outline: none; cursor: not-allowed" readonly disabled name="userName" value="{{ superAdmin.username }}">
+                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ superAdmin.first_name }}">
+                        <input required class="border-2 border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" value="{{ superAdmin.email }}">
                         <label class="switch">
-                            <input {% if user.is_active %} checked {% endif %} name="isActive" type="checkbox">
+                            <input {% if superAdmin.is_active %} checked {% endif %} name="isActive" type="checkbox">
                             <div class="slider">
                                 <div class="circle">
                                     <svg class="cross" xml:space="preserve" style="enable-background:new 0 0 512 512" viewBox="0 0 365.696 365.696" y="0" x="0" height="6" width="6" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -94,11 +95,11 @@
                     </div>
 
                     <div>
-                        <label for="imgLabel{{ user.id }}" class="object-cover w-auto rounded-t-lg h-[15rem] md:h-96 md:w-48 md:rounded-none md:rounded-s-lg relative sm:w-[12rem] sm:h-[12rem] overflow-hidden mt-10 bg-white  flex items-center justify-center">
-                            <img id="userImage{{ user.id }}" alt="user image" src="{{ user.profileImage.url }}" class="w-full h-full object-cover">
+                        <label for="imgLabel{{ superAdmin.id }}" class="object-cover w-auto rounded-t-lg h-[15rem] md:h-96 md:w-48 md:rounded-none md:rounded-s-lg relative sm:w-[12rem] sm:h-[12rem] overflow-hidden mt-10 bg-white  flex items-center justify-center">
+                            <img id="userImage{{ superAdmin.id }}" alt="user image" src="{{ superAdmin.profileImage.url }}" class="w-full h-full object-cover">
                         </label>
-                        <input value="{{ user.profileImage }}" type="file" id="imgLabel{{ user.id }}" name="profileImage" class="hidden"
-                        onchange="document.getElementById('userImage{{ user.id }}').src = window.URL.createObjectURL(this.files[0])">
+                        <input value="{{ superAdmin.profileImage }}" type="file" id="imgLabel{{ superAdmin.id }}" name="profileImage" class="hidden"
+                        onchange="document.getElementById('userImage{{ superAdmin.id }}').src = window.URL.createObjectURL(this.files[0])">
                     </div>
                 </div>
                  <div>
@@ -106,6 +107,7 @@
                      <button type="submit" formaction="{% url 'deleteSuperUser'  %}" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete User</button>
                 </div>
                 </form>
+                {% endif %}
             {% endfor %}
 
         </div>

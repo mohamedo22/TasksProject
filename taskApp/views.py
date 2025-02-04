@@ -1,6 +1,6 @@
 import os
 import random
-
+import cloudinary.uploader
 from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -340,9 +340,7 @@ def editUserFromAdmin(request):
             if secondStudentRule: user.secondStudentRule = secondStudentRule
             if adminRule:user.adminRule = adminRule
             if profileImage:
-                oldImage = user.profileImage.path
                 user.profileImage = compressImage(profileImage)
-                os.remove(oldImage)
             if isActive == "on":
                 user.is_active = True
             else:
@@ -371,9 +369,7 @@ def superAdminProfile(request):
             if email : user.email = email
             if nationalId : user.nationalId = nationalId
             if profileImage:
-                oldImage = user.profileImage.path
                 user.profileImage = compressImage(profileImage)
-                os.remove(oldImage)
             user.save()
             currentAdmin = SuperAdmin.objects.get(id=request.user.id)
             currentAdmin.first_name = currentAdmin.first_name[:8]
@@ -394,9 +390,7 @@ def editSuperUserFromAdmin(request):
             user.first_name = name
             user.email = email
             if profileImage:
-                oldImage = user.profileImage.path
                 user.profileImage = compressImage(profileImage)
-                os.remove(oldImage)
             if isActive == "on":
                 user.is_active = True
             else:
@@ -409,9 +403,7 @@ def deleteUser(request):
         userId = request.POST.get('userId')
         user = UserProfile.objects.get(id=userId)
         if user:
-            profileImage = user.profileImage.path
             user.delete()
-            os.remove(profileImage)
     return ManageUsers(request, deleted='True')
 @login_required
 def deleteSuperUser(request):
@@ -420,9 +412,7 @@ def deleteSuperUser(request):
             userId = request.POST.get('userId')
             user = SuperAdmin.objects.get(id=userId)
             if user:
-                profileImage = user.profileImage.path
                 user.delete()
-                os.remove(profileImage)
         return ManageSuperUsers(request,deleted='True')
 @login_required
 def dashBoardAddUser(request):
@@ -723,15 +713,9 @@ def deleteTask(request):
         except Task.DoesNotExist:
             return redirect("some_error_page")
         if task.user.id == request.user.id or  request.user.is_superuser:
-            for taskImage in task.taskimages_set.all():
-                if os.path.exists(taskImage.image.path):
-                    os.remove(taskImage.image.path)
             task.delete()
             return redirect(login)
         elif (user and user.userPermission == "admin"):
-            for taskImage in task.taskimages_set.all():
-                if os.path.exists(taskImage.image.path):
-                    os.remove(taskImage.image.path)
             task.delete()
             return redirect(login)
 
@@ -813,9 +797,7 @@ def userProfile(request,id):
             if phone is not None:
                 user.phone = phone
             if profileImage is not None:
-                old_image_path = user.profileImage.path
                 user.profileImage = compressImage(profileImage)
-                os.remove(old_image_path)
             user.save()
             return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
     return render(request,'UserProfile.html' , {'userData':user , "updated":""})

@@ -71,12 +71,12 @@
                 <div class="flex flex-col-reverse sm:flex-row  gap-8 items-center">
                     <div class="flex flex-col gap-2 bg-white p-2">
                         <input name="userId" value="{{ user.id }}" hidden>
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" value="{{ user.name }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" value="{{ user.email }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="password" value="{{ user.password }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="phone" value="{{ user.phone }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="address" value="{{ user.location }}">
-                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="nationalId" value="{{ user.nationalId }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="name" placeholder="Name" value="{{ user.name }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="email" placeholder="Email" value="{{ user.email }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="password" placeholder="Password" value="{{ user.password }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="phone" placeholder="Phone" value="{{ user.phone }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="address" placeholder="Address" value="{{ user.location }}">
+                        <input required class="focus:border-2 focus:border-blue-500 rounded-md px-2 py-1 w-full"  style="outline: none;" name="nationalId" placeholder="NationalID" value="{{ user.nationalId }}">
                         <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="userPermission">
                             <option value="student" {% if user.userPermission == 'student' %} selected {% endif %}>Student</option>
                             <option value="admin" {% if user.userPermission == 'admin' %} selected {% endif %}>Admin</option>
