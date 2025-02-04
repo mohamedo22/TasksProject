@@ -133,13 +133,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = "https://res.cloudinary.com/dkcyr1ca9/static/"
-STATICFILES_STORAGE = "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
-
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+##########################################
 
-# Media Files on Cloudinary
+# Media files
+# https://docs.djangoproject.com/en/5.1/topics/files/
+
 MEDIA_URL = '/media/'
+
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dkcyr1ca9',
     'API_KEY': '774237772169935',
@@ -147,6 +153,7 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # auth setting
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Allows explicit control via set_expiry()
