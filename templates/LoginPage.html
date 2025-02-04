@@ -8,15 +8,15 @@
     <link rel="icon" href="{%static 'Images/PHP logo.png'%}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-<body class="flex">
+<body class="flex h-full w-[100vw] overflow-hidden">
 
 <section class="bg-white">
   <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
-    <section class=" relative bg-white sm:w-[56vw] flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
+    <section class="sm:top-[15rem] relative bg-white sm:w-[56vw] flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
       <img
         alt=""
-        src="{% static 'Images/Iats logo.png' %}"
-        class="absolute inset-0 h-full w-full object-cover opacity-80 "
+        src="{% static 'Images/ElsewedLogo.png' %}"
+        class="absolute inset-0   w-full  opacity-80 "
       />
 
       <div class="hidden lg:relative lg:block lg:p-12">
@@ -54,8 +54,9 @@
              <form method="post" class=" ">
                  {% csrf_token %}
                  <div class="hidden sm:flex items-center gap-2">
-                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/PHP logo.png' %}">
-                     <p class="font-bold relative text-sm" >PHP  TEAM</p>
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/Iats logo.png' %}">
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/MOE-Logo.png' %}">
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/PHP-logo.png' %}">
                  </div>
                  <h1 class="text-2xl font-bold text-gray-800 mb-6 mt-8">
                       Welcome, our future
@@ -69,16 +70,18 @@
                             placeholder="Enter Email"
                             class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                    </div>
+                 </div>
                  <div class="flex flex-col mt-4 gap-4">
                      <label for="password">Password</label>
                      <input
-                             id="email"
+                             id="password"
                              name="password"
                             type="text"
                             placeholder="Enter Password"
                             class="w-[20rem] p-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+
+                     <a href="{% url 'forgetPassword' %}" class="text-blue-600 text-xs">Forget Your Super Admin Password?</a>
                  </div>
 
                  <label
@@ -97,7 +100,9 @@
                   class="mt-10 w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-700 transition-all duration-300">
                   Sign in
                 </button>
-                 <a href="{% url 'student_home' %}" class="text-blue-500 relative top-6 left-[6.5rem]">Enter as a Guest</a>
+                 <div class="flex flex-col gap-4 items-center -ml-[12rem]">
+                     <a href="{% url 'student_home' %}" class="text-blue-500 relative top-6 left-[6.5rem]">Enter as a Guest</a>
+                 </div>
              </form>
         </div>
       </div>

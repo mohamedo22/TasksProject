@@ -21,7 +21,7 @@ class UserProfile(User):
         return self.name
 class SuperAdmin(User):
     nationalId = models.CharField(max_length=20,default=0)
-    profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultAdminProfile.png')
+    profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultUserProfile.png')
     pass
 #### other Tables #######
 class Task(models.Model):

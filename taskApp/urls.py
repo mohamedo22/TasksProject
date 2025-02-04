@@ -8,6 +8,7 @@ urlpatterns = [
     path('', login, name='index'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('setting/changePassword', changePassword , name='change_password'),
+    path('ForgetPassword', forgetPassword , name='forgetPassword'),
     path('student_home/',studentHome,name='student_home'),
     path('admin_home/',adminHome,name='admin_home'),
     path('DashBoard/sendEmail',sendEmailFromAdmin , name='sendEmailFromAdmin'),

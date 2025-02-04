@@ -1,11 +1,15 @@
 import os
+import random
+
 from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage
+from django.utils.timezone import now, is_naive, make_aware
+
+from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage, createInitialSuperAdmin
 from .Functions.SharedFunctions import returnUsers, compressImage
 from .models import *
 from datetime import *
@@ -67,9 +71,10 @@ def send_login_email(email):
     send_mail(
         subject="Login Successfully",
         message="There is a new login to your account in 'Sewedy PHP Tasks app'.",
+        html_message= "<h2>There is a new login to your account in  <span style='color:green'>Sewedy PHP Tasks app</span>.</h2>",
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[email],
-        fail_silently=False
+        fail_silently=True
     )
 def redirect_user_based_on_role(user):
     if user.is_superuser:
@@ -77,6 +82,7 @@ def redirect_user_based_on_role(user):
     else:
         return redirect(studentHome)
 def login(request):
+    createInitialSuperAdmin()
     if request.user.is_authenticated:
         return redirect_user_based_on_role(request.user)
     if request.method == 'POST':
@@ -164,6 +170,70 @@ def changePassword(request):
             logout(request)
             return redirect(login)
     return render(request,'change_password.html',)
+def forgetPassword(request):
+    context = {
+        "requested" : "False"
+    }
+    if request.method == 'POST':
+        if 'email' in request.POST:
+            email = request.POST.get('email')
+            try:
+                superAdmin = SuperAdmin.objects.get(email=email)
+                OTP = str(random.randint(100000, 999999))
+                OTP_CreatedTime = now() + timedelta(minutes=4)
+
+                request.session['OTP'] = OTP
+                request.session['userID'] = superAdmin.id
+                request.session['OTP_CreatedTime'] = OTP_CreatedTime.isoformat()
+                request.session['sent'] = True
+                sendEmailMessage(f'<h1>Your OTP Code Is <span style="color:red;font-weight:bold;">{OTP}</span></h1>',
+                                 "OTP Code", email)
+                context['requested'] = "True"
+                context['sent'] = "True"
+
+            except SuperAdmin.DoesNotExist:
+                context['requested'] = "True"
+                context['sent'] = "True"
+                request.session['sent'] = False
+        elif 'sixthNumber' in request.POST:
+            if request.session.get('sent',False):
+                user_OTP = ''.join([
+                    request.POST.get('firstNumber', ''),
+                    request.POST.get('secondNumber', ''),
+                    request.POST.get('thirdNumber', ''),
+                    request.POST.get('forthNumber', ''),
+                    request.POST.get('fifthNumber', ''),
+                    request.POST.get('sixthNumber', '')
+                ]).strip()
+                stored_OTP = request.session.get('OTP')
+                expiry_time_str = request.session.get('OTP_CreatedTime')
+                if expiry_time_str:
+                    expiry_time = datetime.fromisoformat(expiry_time_str)
+                    if is_naive(expiry_time):
+                        expiry_time = make_aware(expiry_time)
+                    if now() < expiry_time:
+                        if user_OTP == stored_OTP:
+                            superAdmin = SuperAdmin.objects.get(id=request.session.get('userID'))
+                            superAdmin.password = superAdmin.nationalId
+                            superAdmin.save()
+                            context['reset'] = "True"
+                            del request.session['OTP']
+                            del request.session['userID']
+                        else:
+                            del request.session['OTP']
+                            del request.session['userID']
+                            context['error'] = "Invalid OTP"
+                    else:
+                        del request.session['OTP']
+                        del request.session['userID']
+                        context['error'] = "OTP expired"
+                else:
+                    del request.session['OTP']
+                    del request.session['userID']
+                    context['error'] = "OTP session expired"
+            else:
+                context['error'] = "Invalid OTP"
+    return render(request, 'forgetPassword.html', context)
 @login_required
 def adminHome(request):
     createStatics()

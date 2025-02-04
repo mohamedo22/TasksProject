@@ -49,8 +49,25 @@ def contextOfDashBoard(request):
 def sendEmailMessage(message,title,email):
     send_mail(
         subject=title,
+        html_message=message,
         message=message,
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[email],
-        fail_silently=False,
+        fail_silently=True,
     )
+def createInitialSuperAdmin():
+    try:
+        superAdmin = SuperAdmin.objects.get(email = 'Waelhussein.eis@gmail.com')
+        if superAdmin:
+            pass
+        else:
+            initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='Waelhussein.eis@gmail.com',
+                                           nationalId='28008092102471', password='28008092102471',
+                                           username='Wael28008092102471', is_superuser=True, is_staff=True)
+
+            initialSuperAdmin.save()
+    except SuperAdmin.DoesNotExist:
+        initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='Waelhussein.eis@gmail.com',
+                                       nationalId='28008092102471', password='28008092102471',
+                                       username='Wael28008092102471', is_superuser=True, is_staff=True)
+        initialSuperAdmin.save()
