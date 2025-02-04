@@ -1,0 +1,16 @@
+/* From Uiverse.io by escannord */
+#fileInput {
+  max-width: 190px;
+  display: none;
+}
+
+.labelFile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  align-items: center;
+  text-align: center;
+  color: #404040;
+  cursor: pointer;
+}
