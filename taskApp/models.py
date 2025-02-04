@@ -16,13 +16,13 @@ class UserProfile(User):
     firstStudentRule = models.CharField(max_length=50 , null=True)
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)
-    profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultUserProfile.png',null=True)
+    profileImage = models.ImageField(upload_to='media/profileImages', default='profileImages/defaultUserProfile.png',null=True)
     totalTasks = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 class SuperAdmin(User):
     nationalId = models.CharField(max_length=20,default=0)
-    profileImage = models.ImageField(upload_to='profileImages', default='profileImages/defaultUserProfile.png')
+    profileImage = models.ImageField(upload_to='media/profileImages', default='profileImages/defaultUserProfile.png')
     pass
 #### other Tables #######
 class Task(models.Model):
@@ -38,7 +38,7 @@ class Task(models.Model):
 
 def taskImageUpload(instance, filename):
     taskTitle = slugify(instance.task.title.strip())
-    return f'{taskTitle}_Images/{filename}'
+    return f'media/{taskTitle}_Images/{filename}'
 
 
 class TaskImages(models.Model):
