@@ -27,12 +27,13 @@ SECRET_KEY = 'django-insecure-p&hhr+&qq(wck4jgy%#8#wtm*o14m73slj)rio6&8j0ph5-$py
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,12 +42,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'taskApp.apps.TaskappConfig',
     'cloudinary',
-    'cloudinary_storage'
+
 ]
+
+
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -133,18 +138,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dkcyr1ca9',
+    'API_KEY': '774237772169935',
+    'API_SECRET': 'lLU7-9J9ullJuuAoQJ87_XUy7C4'
 }
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 ##########################################
 
@@ -152,12 +158,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/topics/files/
 
 MEDIA_URL = '/media/'
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dkcyr1ca9',
-    'API_KEY': '774237772169935',
-    'API_SECRET': 'lLU7-9J9ullJuuAoQJ87_XUy7C4'
-}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
