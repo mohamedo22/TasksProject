@@ -783,6 +783,7 @@ def taskDetails(request,studentId,id):
     return render(request,'TaskDetails.html' , context)
 def userProfile(request,id):
     user = UserProfile.objects.get(id=id)
+
     if request.method == 'POST':
         if user.id == request.user.id:
             email = request.POST.get('email')
