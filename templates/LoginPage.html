@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogIn Page</title>
-    <link rel="icon" href="{%static 'Images/PHP logo.png'%}">
+    <link rel="icon" href="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710796/ElsewedLogo_kda1um.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 <body class="flex h-full w-[100vw] overflow-hidden">
@@ -15,7 +14,7 @@
     <section class="sm:top-[15rem] relative bg-white sm:w-[56vw] flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
       <img
         alt=""
-        src="{% static 'Images/ElsewedLogo.png' %}"
+        src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710796/ElsewedLogo_kda1um.png"
         class="absolute inset-0   w-full  opacity-80 "
       />
 
@@ -47,16 +46,16 @@
             href="#"
           >
             <span class="sr-only">Home</span>
-            <img alt="PHP logo" class=" sm:size-12" src="{% static 'Images/PHP logo.png' %}">
+            <img alt="PHP logo" class=" sm:size-12" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710802/PHP-logo_jglqhk.png">
           </a>
         </div>
         <div class="h-[80vh] grid place-items-center sm:border-l-[.2rem] sm:px-10 ">
              <form method="post" class=" ">
                  {% csrf_token %}
                  <div class="hidden sm:flex items-center gap-2">
-                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/Iats logo.png' %}">
-                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/MOE-Logo.png' %}">
-                     <img alt="PHP logo" class="size-8 sm:size-12" src="{% static 'Images/PHP-logo.png' %}">
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710798/iats-logo_icu57h.svg">
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710800/MOE-Logo_jg6x6u.png">
+                     <img alt="PHP logo" class="size-8 sm:size-12" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710802/PHP-logo_jglqhk.png">
                  </div>
                  <h1 class="text-2xl font-bold text-gray-800 mb-6 mt-8">
                       Welcome, our future
