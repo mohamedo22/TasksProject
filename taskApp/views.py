@@ -505,7 +505,7 @@ def dashBoardAddUser(request):
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h1><img class="partyIcon" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738760983/party-popper-svgrepo-com_z4orc5.svg" alt="Email Icon"> Welcome to Elsewedy PHP Tasks! <img class="partyIcon" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738760983/party-popper-svgrepo-com_z4orc5.svg" alt="Email Icon"></h1>
+                            <h1>🎉 Welcome to Elsewedy PHP Tasks! 🎉</h1>
                             <p>Your journey to efficient task management starts now</p>
                         </div>
                         <div class="content">
@@ -513,17 +513,17 @@ def dashBoardAddUser(request):
                             <p style="line-height: 1.6; color: #4a5568;">We're excited to have you on board! Below are your login credentials:</p>
                             <div class="credentials">
                                 <div style="margin: 10px 0;" class="containerField">
-                                    <img style="width:2.5rem" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738761190/email-part-2-svgrepo-com_aps5nr.svg" alt="Email Icon"> <strong>Email:</strong> <p>user@example.com</p>
+                                    📧 <strong>Email:</strong> <p>user@example.com</p>
                                 </div>
                                 <div style="margin: 10px 0;" class="containerField">
-                                    <img style="width:4rem;" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738763322/password-management-svgrepo-com_zjcq2b.svg" alt="Email Icon"> <strong>Password:</strong> <p>your_secure_password</p>
+                                    🔒 <strong>Password:</strong> <p>your_secure_password</p>
                                 </div>
                             </div>
                             <p style="text-align: center; margin: 35px 0;">
                                 <a href="https://php-app-nine.vercel.app/" class="button">Get Started Now</a>
                             </p>
                             <p style="color: #718096; font-size: 0.95em;">
-                                <img style="width:1.5rem;" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738763760/idea-svgrepo-com_pwsbx5.svg" alt="Email Icon"> Pro Tip: You can change your password after logging in for added security.
+                                💡 Pro Tip: You can change your password after logging in for added security.
                             </p>
                         </div>
                         <div class="footer">
