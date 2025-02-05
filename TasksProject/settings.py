@@ -140,13 +140,15 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # Media files
 # https://docs.djangoproject.com/en/5.1/topics/files/
 
-MEDIA_URL = '/media/'
+
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dkcyr1ca9',
     'API_KEY': '774237772169935',
     'API_SECRET': 'lLU7-9J9ullJuuAoQJ87_XUy7C4'
 }
+
+MEDIA_URL = '/media/'
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
