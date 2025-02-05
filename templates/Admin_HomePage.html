@@ -13,8 +13,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body>
-        <div x-data="setup()" :class="{ 'dark': isDark }">
-        <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white">
+        <div x-data="setup()" >
+        <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-white  text-black">
 
       <!-- Header -->
       {% include 'components/dashBoardHeader.html' %}
@@ -28,16 +28,16 @@
 
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-4">
-          <div class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+          <div class="bg-blue-500  shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 text-white font-medium group">
             <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
-              <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-blue-800 dark:text-gray-800 transform transition-transform duration-500 ease-in-out"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+              <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="stroke-current text-blue-800  transform transition-transform duration-500 ease-in-out"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </div>
             <div class="text-right">
               <p class="text-2xl">{{ totalGuests }}</p>
               <p>Visitors</p>
             </div>
           </div>
-          <div class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+          <div class="bg-blue-500  shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 text-white font-medium group">
             <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-10">
   <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
@@ -49,7 +49,7 @@
               <p>Students</p>
             </div>
           </div>
-          <div class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+          <div class="bg-blue-500  shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600  text-white font-medium group">
             <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                 <i class="fa-solid fa-user-tie text-blue-800 text-[1.5rem]"></i>
             </div>
@@ -58,7 +58,7 @@
               <p>Admins</p>
             </div>
           </div>
-          <div class="bg-blue-500 dark:bg-gray-800 shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600 dark:border-gray-600 text-white font-medium group">
+          <div class="bg-blue-500  shadow-lg rounded-md flex items-center justify-between p-3 border-b-4 border-blue-600  text-white font-medium group">
             <div class="flex justify-center items-center w-14 h-14 bg-white rounded-full transition-all duration-300 transform group-hover:rotate-12">
                 <i class="fa-solid fa-list-check text-blue-800 text-[1.5rem]"></i>
             </div>
@@ -89,16 +89,16 @@
             <div class="w-full overflow-x-auto">
               <table class="w-full">
                 <thead>
-                  <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                  <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b  bg-gray-50 ">
                     <th class="px-4 py-3">Users</th>
                     <th class="px-4 py-3">Tasks</th>
                     <th class="px-4 py-3">Grade</th>
                     <th class="px-4 py-3">Join Date</th>
                   </tr>
                 </thead>
-                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                <tbody class="bg-white divide-y ">
                   {% for user in users %}
-                  	<tr class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-400">
+                  	<tr class="bg-gray-50  hover:bg-gray-100 text-gray-700 ">
                     <td class="px-4 py-3">
                       <a href="{% url 'userProfile'  user.id %}"><div class="flex items-center text-sm">
                         <div class="relative hidden w-8 h-8 mr-3 rounded-full md:block">
@@ -107,7 +107,7 @@
                         </div>
                         <div>
                           <p class="font-semibold">{{ user.name }}</p>
-                          <p class="text-xs text-gray-600 dark:text-gray-400">{{ user.userPermission }}</p>
+                          <p class="text-xs text-gray-600 ">{{ user.userPermission }}</p>
                         </div>
                       </div></a>
                     </td>
@@ -122,7 +122,7 @@
                 </tbody>
               </table>
             </div>
-            <div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800">
+            <div class="grid px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t  bg-gray-50 sm:grid-cols-9 ">
               <span class="flex items-center col-span-3"> Total users {{ totalUsers }} </span>
               <span class="col-span-2"></span>
               <!-- Pagination -->
@@ -156,7 +156,7 @@
                   {% for page in users.paginator.page_range %}
                   <li>
                     {% if page == users.number %}
-                    <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                    <button class="px-3 py-1 text-white  transition-colors duration-150 bg-blue-600  border border-r-0 border-blue-600  rounded-md focus:outline-none focus:shadow-outline-purple">
                       {{ page }}
                     </button>
                     {% else %}
@@ -201,16 +201,16 @@
         <!-- Contact Form -->
         <div class="mt-8 mx-4">
           <div class="grid grid-cols-1 md:grid-cols-2">
-            <div class="p-6 mr-2 bg-gray-100 dark:bg-gray-800 sm:rounded-lg">
-              <h1 class="text-4xl sm:text-5xl text-gray-800 dark:text-white font-extrabold tracking-tight">Contact Your Students</h1>
-              <p class="text-normal text-lg sm:text-2xl font-medium text-gray-600 dark:text-gray-400 mt-8">Fill in the form to submit any message</p>
+            <div class="p-6 mr-2 bg-gray-100  sm:rounded-lg">
+              <h1 class="text-4xl sm:text-5xl text-gray-800  font-extrabold tracking-tight">Contact Your Students</h1>
+              <p class="text-normal text-lg sm:text-2xl font-medium text-gray-600  mt-8">Fill in the form to submit any message</p>
 
             </div>
             <form method="post" class="p-6 flex flex-col justify-center">
             {% csrf_token %}
               <div class="flex flex-col">
-                <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an Email</label>
-                  <select name="userEmail" id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 ">Select an Email</label>
+                  <select name="userEmail" id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     <option selected>Choose a User Email</option>
                       {% for userEmail in usersEmail %}
                       	<option value="{{ userEmail }}">{{ userEmail }}</option>
@@ -220,15 +220,15 @@
 
               <div class="flex flex-col mt-2">
                 <label for="title" class="hidden">title</label>
-                <input type="text" name="emailTitle" id="title" placeholder="Email title" class="w-100 mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 dark:text-gray-50 font-semibold focus:border-blue-500 focus:outline-none" />
+                <input type="text" name="emailTitle" id="title" placeholder="Email title" class="w-100 mt-2 py-3 px-3 rounded-lg bg-white  border border-gray-400  text-gray-800  font-semibold focus:border-blue-500 focus:outline-none" />
               </div>
 
               <div class="flex flex-col mt-2">
                 <label for="message" class="hidden">message</label>
-                <textarea placeholder="Message" name="emailmessage" id="message" class="w-100 h-[10rem] mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 dark:text-gray-50 font-semibold focus:border-blue-500 focus:outline-none"></textarea>
+                <textarea placeholder="Message" name="emailmessage" id="message" class="w-100 h-[10rem] mt-2 py-3 px-3 rounded-lg bg-white  border border-gray-400  text-gray-800  font-semibold focus:border-blue-500 focus:outline-none"></textarea>
               </div>
 
-              <button type="submit" formaction="{% url 'sendEmailFromAdmin' %}" class="md:w-32 bg-blue-600 dark:bg-gray-100 text-white dark:text-gray-800 font-bold py-3 px-6 rounded-lg mt-4 hover:bg-blue-500 dark:hover:bg-gray-200 transition ease-in-out duration-300">Submit</button>
+              <button type="submit" formaction="{% url 'sendEmailFromAdmin' %}" class="md:w-32 bg-blue-600  text-white  font-bold py-3 px-6 rounded-lg mt-4 hover:bg-blue-500  transition ease-in-out duration-300">Submit</button>
             </form>
           </div>
         </div>

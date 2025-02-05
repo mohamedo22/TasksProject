@@ -19,22 +19,22 @@
 
 <!-- drawer init and show -->
 <div class="text-center hidden sm:block">
-   <button class="mt-8 w-max sm:mr-6 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
+   <button class="mt-8 w-max sm:mr-6 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  focus:outline-none " type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation">
     <img src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738710799/Menu_zfrxyp.gif" alt="logo" class="size-8" />
    </button>
 </div>
 
 <!-- drawer component -->
-<div id="drawer-navigation" class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800" tabindex="-1" aria-labelledby="drawer-navigation-label">
-    <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">All Tasks</h5>
-    <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" >
+<div id="drawer-navigation" class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white " tabindex="-1" aria-labelledby="drawer-navigation-label">
+    <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase">All Tasks</h5>
+    <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center" >
         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         <span class="sr-only">Close menu</span>
     </button>
   <div class="py-4 overflow-y-auto">
       <ul class="space-y-2 font-medium">
             {% for member in usersData %}
-            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-example" data-collapse-toggle="{{ member.name }}{{ member.id }}">
+            	<button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 " aria-controls="dropdown-example" data-collapse-toggle="{{ member.name }}{{ member.id }}">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                   </svg>
@@ -47,7 +47,7 @@
                   {% if member.task_set.all %}
                   	{% for task in member.task_set.all %}
                   		<li >
-                         <a href="{% url 'taskDetails' task.user.id task.id %}" class="flex items-center gap-2 w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                         <a href="{% url 'taskDetails' task.user.id task.id %}" class="flex items-center gap-2 w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">
                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="12" cy="12" r="9" stroke="#04C847" stroke-width="2"/>
                                 <path d="M8 12L11 15L16 9" stroke="#04C847" stroke-width="2"/>
@@ -58,7 +58,7 @@
                   	{% endfor %}
                   	{% else %}
                       <li>
-                         <p  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Student Has No task !</p>
+                         <p  class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 ">Student Has No task !</p>
                       </li>
                   {% endif %}
             </ul>
@@ -112,7 +112,7 @@
     </div>
 
     <div class="mt-6 sm:mt-10 -mr-6 sm:mr-7">
-        <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-600 dark:hover:text-blue-500 md:me-0 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-white" type="button">
+        <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm pe-1 font-medium text-gray-900 rounded-full hover:text-blue-600 md:me-0 focus:ring-4 focus:ring-gray-100" type="button">
             <span class="sr-only">Open user menu</span>
             <img class="w-8 h-8 me-2 rounded-full" src="{{ userProfile.profileImage.url }}" alt="user photo">
             {{ userProfile.name }}
@@ -122,18 +122,18 @@
         </button>
 
         <!-- Dropdown menu -->
-        <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-            <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+        <div id="dropdownAvatarName" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ">
+            <div class="px-4 py-3 text-sm text-gray-900 ">
               <div class="truncate">{{ userProfile.email}}</div>
             </div>
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+            <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
               <li>
-                <a href="{% url 'userProfile' userProfile.id %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"><i class="fa-regular fa-circle-user mr-2 font-bold"> </i> Profile </a>
+                <a href="{% url 'userProfile' userProfile.id %}" class="block px-4 py-2 hover:bg-gray-100"><i class="fa-regular fa-circle-user mr-2 font-bold"> </i> Profile </a>
               </li>
             </ul>
             <form method="POST" action="{% url 'logout' %}">
               {% csrf_token %}
-              <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+              <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <i class="fa-solid fa-right-from-bracket mr-2" style="color: #f70202;"></i>  Sign out
               </button>
             </form>
@@ -199,22 +199,22 @@
 
             <form method="post" class="sm:w-[17rem] w-[15rem] mx-auto">
                 {% csrf_token %}
-                <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only ">Search</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
                     </div>
-                    <input type="search" name="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search By name"  />
-                    <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                    <input type="search" name="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search By name"  />
+                    <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
                 </div>
                 </form>
 
           </div>
 
 {#            ######################}
-        <div class="flex flex-col items-center -space-y-14 mb-20 sm:mb-0 md:-space-y-0 sm:gap-10">
+        <div class="flex flex-col h-max items-center -space-y-14 mb-20 sm:mb-[13rem] md:-space-y-0 sm:gap-10">
             <div class="grid sm:grid-cols-4 w-full  sm:h-[20vh] gap-4 sm:gap-[5rem] p-[1rem] sm:px-[4rem] my-20"
                 >
                 {% if usersData %}
@@ -250,7 +250,7 @@
                 {% endif %}
             </div>
             {% if usersData.paginator.num_pages > 1 %}
-            	<div class="flex l-0 sm:l-[20rem] col-span-4 mt-2 sm:mt-4 sm:justify-end">
+            	<div class="flex l-0 sm:l-[20rem] col-span-4 mt-2 sm:mt-4 sm:translate-y-[14.5rem] sm:justify-end">
                             <nav aria-label="Table navigation">
                             <ul class="inline-flex items-center">
                               <!-- Previous Button -->
@@ -280,7 +280,7 @@
                               {% for page in usersData.paginator.page_range %}
                               <li>
                                 {% if page == usersData.number %}
-                                <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                <button class="px-3 py-1 text-white  transition-colors duration-150 bg-blue-600 border border-r-0 border-blue-600 rounded-md focus:outline-none focus:shadow-outline-purple">
                                   {{ page }}
                                 </button>
                                 {% else %}

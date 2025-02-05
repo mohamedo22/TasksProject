@@ -13,8 +13,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
     <body>
-        <div x-data="setup()" :class="{ 'dark': isDark }">
-            <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3] dark:bg-gray-700 text-black dark:text-white">
+        <div x-data="setup()" >
+            <div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased bg-[#F4F3F3]  text-black ">
 
                 <!-- Header -->
                 {% include 'components/dashBoardHeader.html' %}
@@ -88,7 +88,7 @@
                               {% for page in usersData.paginator.page_range %}
                               <li>
                                 {% if page == usersData.number %}
-                                <button class="px-3 py-1 text-white dark:text-gray-800 transition-colors duration-150 bg-blue-600 dark:bg-gray-100 border border-r-0 border-blue-600 dark:border-gray-100 rounded-md focus:outline-none focus:shadow-outline-purple">
+                                <button class="px-3 py-1 text-white  transition-colors duration-150 bg-blue-600  border border-r-0 border-blue-600  rounded-md focus:outline-none focus:shadow-outline-purple">
                                   {{ page }}
                                 </button>
                                 {% else %}
