@@ -148,10 +148,9 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'lLU7-9J9ullJuuAoQJ87_XUy7C4'
 }
 
-MEDIA_URL = '/media/'
-
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+MEDIA_URL = '/media/'
 # auth setting
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Allows explicit control via set_expiry()
