@@ -141,16 +141,17 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.1/topics/files/
 
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_URL = '/media/'
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dkcyr1ca9',
-    'API_KEY': '774237772169935',
-    'API_SECRET': 'lLU7-9J9ullJuuAoQJ87_XUy7C4'
+    'CLOUD_NAME': 'dg5mbsrhk',
+    'API_KEY': '267273763879832',
+    'API_SECRET': '0XrqeDa--90Jkmh93Br5JO79EMk'
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-MEDIA_URL = '/media/'
 # auth setting
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Allows explicit control via set_expiry()
