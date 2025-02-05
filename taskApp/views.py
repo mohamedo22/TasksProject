@@ -474,6 +474,7 @@ def dashBoardAddUser(request):
             if userPermission =='admin':
                 if adminRole:
                     newUser.adminRule = adminRole
+                    lock = True
                 else:
                     lock = False
             else:
@@ -481,6 +482,7 @@ def dashBoardAddUser(request):
                     newUser.grade = grade
                     newUser.firstStudentRule = firstStudentRole
                     newUser.secondStudentRule = secondStudentRole
+                    lock = True
                 else:
                     lock=False
             if lock:
