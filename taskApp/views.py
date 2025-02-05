@@ -486,6 +486,54 @@ def dashBoardAddUser(request):
             if lock:
                 newUser.save()
                 context["created"]="True"
+                html_content = """<!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: 'Arial', sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
+                        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+                        .header { background: linear-gradient(135deg, #007bff, #00c6ff); padding: 40px; text-align: center; color: white; }
+                        .content { padding: 40px; }
+                        .credentials { background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 25px 0; }
+                        .button { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #007bff, #00c6ff); color: white !important; text-decoration: none; border-radius: 10px; font-weight: bold; transition: transform 0.3s ease; }
+                        .button:hover { transform: translateY(-2px); }
+                        .footer { text-align: center; padding: 20px; color: #6c757d; font-size: 0.9em; }
+                        .partyIcon { width:2.5rem; }
+                        .containerField { display:flex; align-items:center; gap:1rem; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1><img class="partyIcon" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738760983/party-popper-svgrepo-com_z4orc5.svg" alt="Email Icon"> Welcome to Elsewedy PHP Tasks! <img class="partyIcon" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738760983/party-popper-svgrepo-com_z4orc5.svg" alt="Email Icon"></h1>
+                            <p>Your journey to efficient task management starts now</p>
+                        </div>
+                        <div class="content">
+                            <h2 style="color: #2c3e50; margin-bottom: 30px;">Hi there,</h2>
+                            <p style="line-height: 1.6; color: #4a5568;">We're excited to have you on board! Below are your login credentials:</p>
+                            <div class="credentials">
+                                <div style="margin: 10px 0;" class="containerField">
+                                    <img style="width:2.5rem" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738761190/email-part-2-svgrepo-com_aps5nr.svg" alt="Email Icon"> <strong>Email:</strong> <p>user@example.com</p>
+                                </div>
+                                <div style="margin: 10px 0;" class="containerField">
+                                    <img style="width:4rem;" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738763322/password-management-svgrepo-com_zjcq2b.svg" alt="Email Icon"> <strong>Password:</strong> <p>your_secure_password</p>
+                                </div>
+                            </div>
+                            <p style="text-align: center; margin: 35px 0;">
+                                <a href="https://php-app-nine.vercel.app/" class="button">Get Started Now</a>
+                            </p>
+                            <p style="color: #718096; font-size: 0.95em;">
+                                <img style="width:1.5rem;" src="https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738763760/idea-svgrepo-com_pwsbx5.svg" alt="Email Icon"> Pro Tip: You can change your password after logging in for added security.
+                            </p>
+                        </div>
+                        <div class="footer">
+                            <p>Need help? Contact us at Mohamed.Osama-std@sw.iatseg.org</p>
+                            <p>© 2024 Elsewedy PHP Tasks. All rights reserved.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>"""
+                sendEmailMessage(html_content,'Welcome To PHP Mangment Tasks App',newUser.email)
             else:
                 context["created"] = "False"
         return render(request,'DashBoard_AddUser.html',context)
