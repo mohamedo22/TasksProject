@@ -488,20 +488,20 @@ def dashBoardAddUser(request):
             if lock:
                 newUser.save()
                 context["created"]="True"
-                html_content = """<!DOCTYPE html>
+                html_content = f"""<!DOCTYPE html>
                 <html>
                 <head>
                     <style>
-                        body { font-family: 'Arial', sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }
-                        .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
-                        .header { background: linear-gradient(135deg, #007bff, #00c6ff); padding: 40px; text-align: center; color: white; }
-                        .content { padding: 40px; }
-                        .credentials { background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 25px 0; }
-                        .button { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #007bff, #00c6ff); color: white !important; text-decoration: none; border-radius: 10px; font-weight: bold; transition: transform 0.3s ease; }
-                        .button:hover { transform: translateY(-2px); }
-                        .footer { text-align: center; padding: 20px; color: #6c757d; font-size: 0.9em; }
-                        .partyIcon { width:2.5rem; }
-                        .containerField { display:flex; align-items:center; gap:1rem; }
+                        body {{ font-family: 'Arial', sans-serif; background-color: #f5f7fa; margin: 0; padding: 0; }}
+                        .container {{ max-width: 600px; margin: 40px auto; background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }}
+                        .header {{ background: linear-gradient(135deg, #007bff, #00c6ff); padding: 40px; text-align: center; color: white; }}
+                        .content {{ padding: 40px; }}
+                        .credentials {{ background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 25px 0; }}
+                        .button {{ display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #007bff, #00c6ff); color: white !important; text-decoration: none; border-radius: 10px; font-weight: bold; transition: transform 0.3s ease; }}
+                        .button:hover {{ transform: translateY(-2px); }}
+                        .footer {{ text-align: center; padding: 20px; color: #6c757d; font-size: 0.9em; }}
+                        .partyIcon {{ width:2.5rem; }}
+                        .containerField {{ display:flex; align-items:center; gap:1rem; }}
                     </style>
                 </head>
                 <body>
@@ -515,10 +515,10 @@ def dashBoardAddUser(request):
                             <p style="line-height: 1.6; color: #4a5568;">We're excited to have you on board! Below are your login credentials:</p>
                             <div class="credentials">
                                 <div style="margin: 10px 0;" class="containerField">
-                                    📧 <strong>Email:</strong> <p>user@example.com</p>
+                                    📧 <strong>Email:</strong> <p> {newUser.email} </p>
                                 </div>
                                 <div style="margin: 10px 0;" class="containerField">
-                                    🔒 <strong>Password:</strong> <p>your_secure_password</p>
+                                    🔒 <strong>Password:</strong> <p> {newUser.password} </p>
                                 </div>
                             </div>
                             <p style="text-align: center; margin: 35px 0;">
