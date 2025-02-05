@@ -34,17 +34,9 @@ class Task(models.Model):
     dateOfTask = models.DateField(default=None)
     publishedDate = models.DateTimeField(auto_now_add=True)
     studentsName = models.TextField()
-
-
-def taskImageUpload(instance, filename):
-    taskTitle = slugify(instance.task.title.strip())
-    return f'media/{taskTitle}_Images/{filename}'
-
-
 class TaskImages(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=taskImageUpload)
-
+    image = models.ImageField(upload_to='tasksImages/')
 class TaskComments(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE,null=True)
