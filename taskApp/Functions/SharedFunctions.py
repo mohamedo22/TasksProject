@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -36,19 +36,57 @@ def returnUsers(request):
         'usersData': users,
     }
     return context
+
+
 def compressImage(image):
-    mime = magic.Magic(mime=True)
-    file_type = mime.from_buffer(image.read())
-    image.seek(0)
-    if not file_type.startswith('image'):
+    try:
+        # Create in-memory file handler
+        img_io = BytesIO()
+
+        # Open and validate image using Pillow
+        with Image.open(image) as img:
+            # Convert to RGB if needed (strip alpha channel)
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
+
+            # Preserve original format if JPEG/PNG, else convert to JPEG
+            original_format = img.format
+            if original_format not in ('JPEG', 'PNG'):
+                original_format = 'JPEG'
+
+            # Set quality parameters (85% for JPEG, optimize for PNG)
+            save_kwargs = {
+                'format': original_format,
+                'quality': 85,
+                'optimize': True
+            }
+
+            # Special handling for PNG to maintain transparency
+            if original_format == 'PNG':
+                img.save(img_io, **save_kwargs, compress_level=3)
+            else:
+                img.save(img_io, **save_kwargs)
+
+            # Determine content type
+            content_type = f'image/{original_format.lower()}'
+
+            # Reset buffer position
+            img_io.seek(0)
+
+            # Create new InMemoryUploadedFile
+            return InMemoryUploadedFile(
+                file=img_io,
+                field_name=None,
+                name=image.name,
+                content_type=content_type,
+                size=img_io.getbuffer().nbytes,
+                charset=None
+            )
+
+    except (UnidentifiedImageError, OSError, IOError):
+        # Handle invalid/corrupt images
         return None
-    img = Image.open(image)
-    if img.mode in ("RGBA", "P"):
-        img = img.convert("RGB")
-    img_io = BytesIO()
-    img.save(img_io, format='JPEG', quality=85)
-    img_io.seek(0)
-    compressed_image = InMemoryUploadedFile(
-        img_io, None, image.name, 'image/jpeg', img_io.tell(), None
-    )
-    return compressed_image
+    except Exception as e:
+        # Log unexpected errors for debugging
+        print(f"Compression error: {str(e)}")
+        return None

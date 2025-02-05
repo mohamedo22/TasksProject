@@ -1,8 +1,9 @@
 from datetime import datetime
+
+from cloudinary_storage.storage import MediaCloudinaryStorage
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-
 # Create your models here.
 
 ###### Auth Tables ########
@@ -16,13 +17,13 @@ class UserProfile(User):
     firstStudentRule = models.CharField(max_length=50 , null=True)
     secondStudentRule = models.CharField(max_length=50 , null=True)
     adminRule = models.CharField(max_length=50 , null=True)
-    profileImage = models.ImageField( default='profileImages/defaultUserProfile.png',null=True)
+    profileImage = models.ImageField( default='https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738752231/defaultUserProfile_bqkjax.png',null=True,storage=MediaCloudinaryStorage())
     totalTasks = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 class SuperAdmin(User):
     nationalId = models.CharField(max_length=20,default=0)
-    profileImage = models.ImageField(default='profileImages/defaultUserProfile.png')
+    profileImage = models.ImageField(default='https://res.cloudinary.com/dkcyr1ca9/image/upload/v1738752231/defaultUserProfile_bqkjax.png',storage=MediaCloudinaryStorage())
     pass
 #### other Tables #######
 class Task(models.Model):
@@ -36,7 +37,7 @@ class Task(models.Model):
     studentsName = models.TextField()
 class TaskImages(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(storage=MediaCloudinaryStorage())
 class TaskComments(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE,null=True)

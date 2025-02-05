@@ -1,6 +1,7 @@
 import os
 import random
 import cloudinary.uploader
+from cloudinary.uploader import upload
 from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -340,7 +341,15 @@ def editUserFromAdmin(request):
             if secondStudentRule: user.secondStudentRule = secondStudentRule
             if adminRule:user.adminRule = adminRule
             if profileImage:
-                user.profileImage = compressImage(profileImage)
+                compressed_image = compressImage(profileImage)
+                if compressed_image:
+                    result = upload(
+                        compressed_image,
+                        public_id=f"user_profiles/{user.id}",
+                        overwrite=True,
+                        quality="auto:good"
+                    )
+                    user.profileImage = result['secure_url']
             if isActive == "on":
                 user.is_active = True
             else:
@@ -369,7 +378,15 @@ def superAdminProfile(request):
             if email : user.email = email
             if nationalId : user.nationalId = nationalId
             if profileImage:
-                user.profileImage = compressImage(profileImage)
+                compressed_image = compressImage(profileImage)
+                if compressed_image:
+                    result = upload(
+                        compressed_image,
+                        public_id=f"user_profiles/{user.id}",
+                        overwrite=True,
+                        quality="auto:good"
+                    )
+                    user.profileImage = result['secure_url']
             user.save()
             currentAdmin = SuperAdmin.objects.get(id=request.user.id)
             currentAdmin.first_name = currentAdmin.first_name[:8]
@@ -390,7 +407,15 @@ def editSuperUserFromAdmin(request):
             user.first_name = name
             user.email = email
             if profileImage:
-                user.profileImage = compressImage(profileImage)
+                compressed_image = compressImage(profileImage)
+                if compressed_image:
+                    result = upload(
+                        compressed_image,
+                        public_id=f"user_profiles/{user.id}",
+                        overwrite=True,
+                        quality="auto:good"
+                    )
+                    user.profileImage = result['secure_url']
             if isActive == "on":
                 user.is_active = True
             else:
@@ -486,10 +511,20 @@ def dashBoardAddSuperUser(request):
                     email=email,
                     nationalId=nationalId,
                     password=nationalId,
-                    profileImage=compressImage(image),
                     is_superuser=True,
                     is_staff=True
                 )
+                newUser.save()
+                if image:
+                    compressed_image = compressImage(image)
+                    if compressed_image:
+                        result = upload(
+                            compressed_image,
+                            public_id=f"user_profiles/{newUser.id}",
+                            overwrite=True,
+                            quality="auto:good"
+                        )
+                        newUser.profileImage = result['secure_url']
                 newUser.save()
                 context["created"]="True"
             else:
@@ -650,7 +685,17 @@ def addTask(request):
             task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
             task.save()
             for image in initiativeImages:
-                    newImage = TaskImages(task=task,image=compressImage(image))
+                    newImage = TaskImages(task=task)
+                    if image:
+                        compressed_image = compressImage(image)
+                        if compressed_image:
+                            result = upload(
+                                compressed_image,
+                                public_id=f"user_profiles/{task.id}",
+                                overwrite=True,
+                                quality="auto:good"
+                            )
+                            newImage.image = result['secure_url']
                     newImage.save()
             return render(request,'AddTask.html' , {'added':"True"})
 
@@ -790,7 +835,6 @@ def userProfile(request,id):
             grade = request.POST.get('grade')
             phone = request.POST.get('phone')
             profileImage = request.FILES.get('profileImage')
-            print(profileImage)
             if email is not None:
                 user.email = email
             if grade is not None:
@@ -798,7 +842,15 @@ def userProfile(request,id):
             if phone is not None:
                 user.phone = phone
             if profileImage is not None:
-                user.profileImage = compressImage(profileImage)
+                compressed_image = compressImage(profileImage)
+                if compressed_image:
+                    result = upload(
+                        compressed_image,
+                        public_id=f"user_profiles/{user.id}",
+                        overwrite=True,
+                        quality="auto:good"
+                    )
+                    user.profileImage = result['secure_url']
             user.save()
             return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
     return render(request,'UserProfile.html' , {'userData':user , "updated":""})

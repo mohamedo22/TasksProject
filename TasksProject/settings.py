@@ -132,8 +132,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATIC_URL = 'static/'
+# STATICFILES_DIRS = [BASE_DIR / 'static']
 
 ##########################################
 
@@ -143,7 +143,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dg5mbsrhk',
     'API_KEY': '267273763879832',
@@ -151,7 +151,6 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
 # auth setting
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Allows explicit control via set_expiry()
