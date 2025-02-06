@@ -741,7 +741,7 @@ def addTask(request):
                         if compressed_image:
                             result = upload(
                                 compressed_image,
-                                public_id=f"user_profiles/{task.id}",
+                                public_id=f"{task.title}/",
                                 overwrite=True,
                                 quality="auto:good"
                             )
