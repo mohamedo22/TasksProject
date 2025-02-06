@@ -266,7 +266,7 @@
                 }
             }
         },
-        labels: ['Study Supports', 'Professional Supports', 'Intermediaries','Ambassadors'],
+        labels: ['Tutors', 'Career Helpers', 'Mediators','Ambassadors'],
     };
     var chart2 = new ApexCharts(chartPie, optionsPie);
     chart2.render();
@@ -277,7 +277,7 @@
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Professional Support Tasks', 'Ambassador Tasks', 'Intermediate Tasks', 'Study Support Tasks'],
+      labels: ['Career Helpers Tasks', 'Ambassador Tasks', 'Mediators Tasks', 'Tutors Tasks'],
       datasets: [{
         label: 'Task Counts',
         data: [{{ totalProfessionalSupportsTasks }}, {{ totalAmbassadorsTasks }}, {{totalIntermediariesTasks}}, {{totalStudySupportsTasks}}],

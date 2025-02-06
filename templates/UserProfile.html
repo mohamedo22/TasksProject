@@ -102,25 +102,25 @@
                                 {% if userData.firstStudentRule == 'AM' %}
                                     value="Ambassador"
                                {% elif userData.firstStudentRule == 'PS' %}
-                                    value="Study Support"
+                                    value="Career Helper"
                                {% elif userData.firstStudentRule == 'IN' %}
-                                    value="Intermediate"
+                                    value="Mediator"
                                {% else %}
-                                    value="Professional Support"
+                                    value="Tutor"
                                 {% endif %}
                                placeholder=" " disabled readonly required />
                         <label for="firstRule" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">First Student Rule</label>
                     </div>
                     <div class="relative z-0 w-full mb-5 group ">
                         <input type="text" name="secondRule" id="secondRule" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                {% if userData.secondStudentRule == 'AM' %}
+                                {% if userData.firstStudentRule == 'AM' %}
                                     value="Ambassador"
-                               {% elif userData.secondStudentRule == 'PS' %}
-                                    value="Study Support"
-                               {% elif userData.secondStudentRule == 'IN' %}
-                                    value="Intermediate"
+                               {% elif userData.firstStudentRule == 'PS' %}
+                                    value="Career Helper"
+                               {% elif userData.firstStudentRule == 'IN' %}
+                                    value="Mediator"
                                {% else %}
-                                    value="Professional Support"
+                                    value="Tutor"
                                 {% endif %} placeholder=" " disabled readonly required />
                         <label for="secondRule" class="peer-focus:font-medium absolute text-sm text-gray-500  duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Second Student Rule</label>
                     </div>
