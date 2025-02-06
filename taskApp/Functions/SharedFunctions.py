@@ -16,7 +16,7 @@ def returnUsers(request):
                 query |= Q(firstStudentRule=filter) | Q(secondStudentRule=filter)
             users = users.filter(query)
         if search:
-            users = UserProfile.objects.filter(title__icontains=search)
+            users = UserProfile.objects.filter(name__icontains=search)
     for user in users:
         user.name = user.name[:7] + "..."
         for task in user.task_set.all():

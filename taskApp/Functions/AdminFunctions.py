@@ -57,17 +57,17 @@ def sendEmailMessage(message,title,email):
     )
 def createInitialSuperAdmin():
     try:
-        superAdmin = SuperAdmin.objects.get(email = 'Waelhussein.eis@gmail.com')
+        superAdmin = SuperAdmin.objects.get(username="Wael28008092102471")
         if superAdmin:
             pass
         else:
-            initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='Waelhussein.eis@gmail.com',
+            initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='waelhussein.eis@gmail.com',
                                            nationalId='28008092102471', password='28008092102471',
                                            username='Wael28008092102471', is_superuser=True, is_staff=True)
 
             initialSuperAdmin.save()
     except SuperAdmin.DoesNotExist:
-        initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='Waelhussein.eis@gmail.com',
+        initialSuperAdmin = SuperAdmin(first_name='Wael', last_name='Darwish', email='waelhussein.eis@gmail.com',
                                        nationalId='28008092102471', password='28008092102471',
                                        username='Wael28008092102471', is_superuser=True, is_staff=True)
         initialSuperAdmin.save()
