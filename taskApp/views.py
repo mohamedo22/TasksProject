@@ -9,7 +9,8 @@ from django.http import HttpResponse
 from django.shortcuts import render , redirect
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils.timezone import now, is_naive, make_aware
-
+from uuid import uuid4
+import re
 from .Functions.AdminFunctions import contextOfDashBoard, sendEmailMessage, createInitialSuperAdmin
 from .Functions.SharedFunctions import returnUsers, compressImage
 from .models import *
@@ -735,18 +736,32 @@ def addTask(request):
             task = Task(user=user,title=title, initiativePlace=initiativePlace , description=description, initiativeType=initiativeType, dateOfTask=formatted_date , studentsName=studentsName)
             task.save()
             for image in initiativeImages:
-                    newImage = TaskImages(task=task)
-                    if image:
-                        compressed_image = compressImage(image)
-                        if compressed_image:
+                if image:
+                    compressed_image = compressImage(image)
+                    if compressed_image:
+                        try:
+                            # Sanitize public_id
+                            sanitized_title = re.sub(r'[^a-zA-Z0-9]', '_', task.title)
+                            unique_id = uuid4()
+                            public_id = f"{sanitized_title}-{task.id}-{unique_id}"
+
+                            # Upload image
                             result = upload(
                                 compressed_image,
-                                public_id=f"{task.title}{task.id}/",
+                                public_id=public_id,
                                 overwrite=True,
                                 quality="auto:good"
                             )
-                            newImage.image = result['secure_url']
-                    newImage.save()
+
+                            if result and 'secure_url' in result:
+                                newImage = TaskImages(task=task)
+                                newImage.image = result['secure_url']
+                                newImage.save()
+                            else:
+                                print("Upload failed for image")
+
+                        except Exception as e:
+                            print(f"Error uploading image: {e}")
             return render(request,'AddTask.html' , {'added':"True"})
 
     return  render(request , 'AddTask.html', {'added':''})
