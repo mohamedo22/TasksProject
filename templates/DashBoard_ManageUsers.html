@@ -115,13 +115,13 @@
                         </select>
                         <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="firstStudentRule">
                             <option value="AM" {% if user.firstStudentRule == 'AM' %} selected {% endif %}>Ambassador</option>
-                            <option value="PS" {% if user.firstStudentRule == 'PS' %} selected {% endif %}>Career Counselor </option>
+                            <option value="PS" {% if user.firstStudentRule == 'PS' %} selected {% endif %}>Career Helper </option>
                             <option value="IN" {% if user.firstStudentRule == 'IN' %} selected {% endif %}>Mediators</option>
                             <option value="SS" {% if user.firstStudentRule == 'SS' %} selected {% endif %}>Tutor</option>
                         </select>
                         <select required class="outline-none border-2 border-blue-500 rounded-md px-2 py-1 w-full" name="secondStudentRule">
                             <option value="AM" {% if user.secondStudentRule == 'AM' %} selected {% endif %}>Ambassador</option>
-                            <option value="PS" {% if user.secondStudentRule == 'PS' %} selected {% endif %}>Career Counselor </option>
+                            <option value="PS" {% if user.secondStudentRule == 'PS' %} selected {% endif %}>Career Helper </option>
                             <option value="IN" {% if user.secondStudentRule == 'IN' %} selected {% endif %}>Mediators</option>
                             <option value="SS" {% if user.secondStudentRule == 'SS' %} selected {% endif %}>Tutor</option>
                         </select>

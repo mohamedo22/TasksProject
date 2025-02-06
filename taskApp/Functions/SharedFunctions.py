@@ -18,7 +18,7 @@ def returnUsers(request):
         if search:
             users = UserProfile.objects.filter(name__icontains=search)
     for user in users:
-        user.name = user.name[:7] + "..."
+        user.name = user.name[:13] + "..."
         for task in user.task_set.all():
             task.title = task.title[:14] + "..."
     page = request.GET.get('page', 1)
