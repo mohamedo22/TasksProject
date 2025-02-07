@@ -740,12 +740,8 @@ def addTask(request):
                     compressed_image = compressImage(image)
                     if compressed_image:
                         try:
-                            sanitized_title = slugify(task.title)[:20]
-                            print(sanitized_title)
                             unique_id = str(uuid4())[:8]
-                            print(unique_id)
-                            public_id = f"{sanitized_title}-{task.id}-{unique_id}"[:80]
-
+                            public_id = f"{task.id}-{unique_id}"[:80]
                             result = upload(
                                 compressed_image,
                                 public_id=public_id,
