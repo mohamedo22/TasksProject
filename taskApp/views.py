@@ -88,7 +88,6 @@ def login(request):
     if request.user.is_authenticated:
         return redirect_user_based_on_role(request.user)
     if request.method == 'POST':
-        print(request.POST)
         email = request.POST.get('email')
         password = request.POST.get('password')
         remember_me = request.POST.get('rememberMy', 'off')
@@ -99,12 +98,8 @@ def login(request):
                 auth_login(request, user)
                 if remember_me == 'on':
                     request.session.set_expiry(60 * 60 * 24 * 30)  # 30 days
-                    print("Remember Me checked: Session expiry set to 30 days")
                 else:
                     request.session.set_expiry(60*30)  # Expire when browser closes
-                    print("Remember Me unchecked: Session expiry set to browser close")
-                print(f"Remember Me: {remember_me}")
-                print(f"Final session expiry: {request.session.get_expiry_age()} seconds")
                 return redirect(studentHome)
         except UserProfile.DoesNotExist:
             try:
@@ -145,16 +140,13 @@ def changePassword(request):
     context={"wrongPassword":"","notMatch":""}
     if request.method == 'POST':
         userId = request.user.id
-        print("user id: ",userId)
         oldPassword = request.POST.get('oldPassword',None)
         newPassword = request.POST.get('newPassword',None)
         confirmPassword = request.POST.get('confirmPassword',None)
         if oldPassword and newPassword and confirmPassword is not None:
             try:
                 user = UserProfile.objects.get(id=userId)
-                print("get user: ", user.name)
             except UserProfile.DoesNotExist:
-                print("get admin")
                 user = SuperAdmin.objects.get(id=userId)
             if not user.password == oldPassword:
                 context["wrongPassword"]="True"
@@ -164,7 +156,6 @@ def changePassword(request):
                 return render(request, 'change_password.html', context)
             user.password = newPassword
             user.save()
-            print("password changed successfully:  " , user.password)
             for session in Session.objects.all():
                 data = session.get_decoded()
                 if data.get('_auth_user_id') == str(userId):
