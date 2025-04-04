@@ -615,6 +615,10 @@ def dashBoardTaskDetiles(request,taskId):
     if request.user.is_superuser:
         task_sp = Task.objects.get(id=taskId)
         currentAdmin = SuperAdmin.objects.get(id=request.user.id)
+        if request.method == 'POST':
+            rate = request.POST.get('rate');
+            task_sp.rate = rate
+            task_sp.save()
         currentAdmin.first_name = currentAdmin.first_name[:8] + "..."
         task_sp.user.name = task_sp.user.name[:20] + "..."
         task_sp.studentsName = task_sp.studentsName.replace("\r", ", ")
@@ -909,6 +913,11 @@ def taskDetails(request,id):
     }
     if request.user.is_authenticated:
         currentUser = UserProfile.objects.get(id=request.user.id)
+        if currentUser.userPermission == "admin":
+            if request.method == 'POST':
+                rate = request.POST.get('rate');
+                task_sp.rate = rate
+                task_sp.save()
         currentUser.name = currentUser.name[:7] + "..."
         context["currentUser"] = currentUser
     return render(request,'TaskDetails.html' , context)

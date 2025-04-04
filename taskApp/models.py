@@ -30,6 +30,7 @@ class Task(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     initiativeType = models.CharField(max_length=2)
     title = models.CharField(max_length=100)
+    rate = models.CharField(default='0')
     description = models.TextField(max_length=2000)
     initiativePlace = models.CharField(max_length=50)
     dateOfTask = models.DateField(default=None)

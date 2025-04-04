@@ -125,7 +125,33 @@
         <div class="w-full overflow-hidden">
         {#info section#}
             <div class="flex flex-col gap-6">
-                <h1 class="font-bold text-black text-[2rem] w-full">{{ task.title }} </h1>
+                <div class="flex gap-2 ">
+                    <h1 class="font-bold text-black text-[1.7rem] w-full">{{ task.title }}  </h1>
+                    <div class="flex items-center gap-4">
+                        {% if currentUser.userPermission == "admin" %}
+                            <form method="post" id="rateForm">
+                            {% csrf_token %}
+                                <select required class="outline-none border-2 border-blue-500 rounded-md px-2 w-[5rem]" id="rate" name="rate">
+                                    <option value="0" {% if task.rate == '0' %} selected {% endif %}>00</option>
+                                    <option value="1" {% if task.rate == '1' %} selected {% endif %}>01</option>
+                                    <option value="2" {% if task.rate == '2' %} selected {% endif %}>02</option>
+                                    <option value="3" {% if task.rate == '3' %} selected {% endif %}>03</option>
+                                    <option value="4" {% if task.rate == '4' %} selected {% endif %}>04</option>
+                                    <option value="5" {% if task.rate == '5' %} selected {% endif %}>05</option>
+                                    <option value="6" {% if task.rate == '6' %} selected {% endif %}>06</option>
+                                    <option value="7" {% if task.rate == '7' %} selected {% endif %}>07</option>
+                                    <option value="8" {% if task.rate == '8' %} selected {% endif %}>08</option>
+                                    <option value="9" {% if task.rate == '9' %} selected {% endif %}>09</option>
+                                    <option value="10" {% if task.rate == '10' %} selected {% endif %}>10</option>
+                                </select>
+                            </form>
+                            {% else %}
+                            <p class="font-semibold text-blue-500" >{{ task.rate }}</p>
+                        {% endif %} 
+                        <p>/</p>
+                        <p>10</p>
+                    </div>
+                </div>
                 <p class="text-[#494848]">{{ task.description}} </p>
                 <p class="flex gap-4 text-[#494848]"><span class="font-semibold">Initiative Place: </span><span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm ">{{ task.initiativePlace}}</span></p>
                 <p class="flex gap-4 text-[#494848]"><span class="font-semibold">Initiative Type: </span><span class="bg-pink-100 text-pink-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm ">{% if task.initiativeType == "SS" %}Tutor{% elif task.initiativeType == "PS" %}Career Counselor{% elif task.initiativeType == "AM" %}Ambassadors{% else %}Mediators{% endif %}</span></p>
@@ -210,6 +236,12 @@
                     {% include 'components/footer_phone.html' %}
                 {% endif %}
             {% endif %}
-
+    <script>
+        let rate = document.getElementById("rate");
+        let rateForm = document.getElementById("rateForm");
+        rate.addEventListener('change',function () {
+           rateForm.submit(); 
+        });
+    </script>
 </body>
 </html>
