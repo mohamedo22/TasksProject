@@ -611,7 +611,7 @@ def dashBoardStudentTasks(request,Id):
         }
         return render(request, 'DashBoardSudentTasks.html', context)
 @login_required
-def dashBoardTaskDetiles(request,studenId,taskId):
+def dashBoardTaskDetiles(request,taskId):
     if request.user.is_superuser:
         task_sp = Task.objects.get(id=taskId)
         currentAdmin = SuperAdmin.objects.get(id=request.user.id)
@@ -663,12 +663,48 @@ def dashBoardTaskDetiles(request,studenId,taskId):
             'admin':currentAdmin,
             'task': task_sp,
             'task_comments': comments,
-            'student':UserProfile.objects.get(id=studenId)
         }
         return render(request, 'dashBoardTaskDetiles.html', context)
-
+def getAllTasks(request):
+    tasks = Task.objects.all().order_by('id')
+    users = UserProfile.objects.filter(userPermission='student')
+    if request.method == 'POST':
+        filters = request.POST.getlist('filter')
+        search = request.POST.get('search')
+        if filters:
+            query = Q()
+            for filter in filters:
+                query |= Q(initiativeType = filter)
+            tasks = tasks.filter(query)
+        if search:
+            tasks = Task.objects.filter(title__icontains=search)
+    for user in users:
+        user.name = user.name[:7] + "..."
+        for task in user.task_set.all():
+            task.title = task.title[:14] + "..."
+    for task in tasks:
+        if len(task.title) > 52:
+            task.title = task.title[:52]+"..."
+        if len(task.description) > 148:
+            task.description = task.description[:148]+"..."
+    page = request.GET.get('page',1)
+    paginator = Paginator(tasks,24)
+    try:
+        tasks = paginator.page(page)
+    except PageNotAnInteger:
+        tasks = paginator.page(1)
+    except EmptyPage:
+        tasks = paginator.page(paginator.num_pages)
+    context = {
+        'tasks': tasks,
+        'usersData':users ,
+    }
+    if request.user.is_authenticated:
+        current_user = UserProfile.objects.get(id=request.user.id)
+        current_user.name = current_user.name[:7]+"..."
+        context["current_user"] = current_user
+    return render(request,'allTasks.html',context)
 def studentTasks(request , id):
-
     student = UserProfile.objects.get(id=id)
     student.name = student.name[:14]+"..."
     tasks = Task.objects.filter(user=student)
@@ -682,7 +718,7 @@ def studentTasks(request , id):
                 query |= Q(initiativeType = filter)
             tasks = tasks.filter(query)
         if search:
-            tasks = Task.objects.filter(title__icontains=search)
+            tasks = tasks.filter(title__icontains=search)
     for user in users:
         user.name = user.name[:7] + "..."
         for task in user.task_set.all():
@@ -817,10 +853,9 @@ def deleteTask(request):
             return redirect(login)
 
     return redirect(login)
-def taskDetails(request,studentId,id):
+def taskDetails(request,id):
     task_sp = Task.objects.get(id=id)
-    student = UserProfile.objects.get(id=studentId)
-    student.name =  student.name[:14]+"..." if len(student.name) > 14  else student.name
+    task_sp.user.name =  task_sp.user.name[:14]+"..." if len(task_sp.user.name) > 14  else task_sp.user.name
     users = UserProfile.objects.filter(userPermission='student')
     for user in users:
         user.name = user.name[:7] + "..."
@@ -828,7 +863,7 @@ def taskDetails(request,studentId,id):
             task.title = task.title[:14] + "..."
     task_sp.user.name = task_sp.user.name[:20] + "..."
     task_sp.studentsName = task_sp.studentsName.replace("\r",", ")
-    student.name = student.name[:7] + "..."
+    task_sp.user.name = task_sp.user.name[:7] + "..."
     task_comments = task_sp.taskcomments_set.all()
     comments = []
     for comment in task_comments:
@@ -868,7 +903,6 @@ def taskDetails(request,studentId,id):
     except EmptyPage:
         comments = paginator.page(paginator.num_pages)
     context = {
-        'student': student,
         'usersData': users,
         'task':task_sp,
         'task_comments':comments,
@@ -906,7 +940,7 @@ def userProfile(request,id):
             user.save()
             return render(request,'UserProfile.html' , {'userData':user , "updated":"True"})
     return render(request,'UserProfile.html' , {'userData':user , "updated":""})
-def addComment(request,studentId,taskId):
+def addComment(request,taskId):
     if request.method == 'POST':
         task = Task.objects.get(id=taskId)
         comment = request.POST.get('comment')
@@ -919,9 +953,9 @@ def addComment(request,studentId,taskId):
             newComment = TaskComments(task=task, comment=comment, user=commenter)
             newComment.save()
         if request.user.is_superuser:
-            return redirect(dashBoardTaskDetiles,studentId,taskId)
-        return redirect(taskDetails,studentId,taskId)
-def addCommentLike(request,studentId,taskId,id):
+            return redirect(dashBoardTaskDetiles,taskId)
+        return redirect(taskDetails,taskId)
+def addCommentLike(request,taskId,id):
     if request.method == 'POST':
         comment = TaskComments.objects.get(id=id)
         commentLiked = request.session.get(f'{comment.id}',False)
@@ -930,13 +964,13 @@ def addCommentLike(request,studentId,taskId,id):
             comment.save()
             request.session[f'{comment.id}'] = False
             if request.user.is_superuser:
-                return redirect(dashBoardTaskDetiles, studentId,taskId)
-            return redirect(taskDetails,studentId, taskId)
+                return redirect(dashBoardTaskDetiles,taskId)
+            return redirect(taskDetails, taskId)
         else:
             request.session[f'{comment.id}'] = True
             comment.likesCount += 1
             comment.save()
             if request.user.is_superuser:
-                return redirect(dashBoardTaskDetiles,studentId,taskId)
-            return redirect(taskDetails, studentId,taskId)
+                return redirect(dashBoardTaskDetiles,taskId)
+            return redirect(taskDetails,taskId)
 

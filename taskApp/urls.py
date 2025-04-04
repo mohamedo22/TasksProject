@@ -27,10 +27,11 @@ urlpatterns = [
     path('student_home/tasks/<int:id>' , studentTasks , name='student_tasks'),
     path('add_task',addTask,name='addTask'),
     path('edit_task/<int:taskId>',editTask,name='editTask'),
+    path('allTasks',getAllTasks,name='allTask'),
     path('delete_task',deleteTask,name='deleteTask'),
-    path('student_home/student/<int:studentId>/task/<int:id>',taskDetails, name='taskDetails'),
-    path('student/<int:studentId>/task/<int:taskId>/addComment' , addComment , name='addComment'),
-    path('student/<int:studentId>/task/<int:taskId>/addCommentLike/<int:id>',addCommentLike,name='addCommentLike'),
+    path('student_home/student/task/<int:id>',taskDetails, name='taskDetails'),
+    path('student/task/<int:taskId>/addComment' , addComment , name='addComment'),
+    path('student/task/<int:taskId>/addCommentLike/<int:id>',addCommentLike,name='addCommentLike'),
     path('setting/user_profile/<int:id>',userProfile,name='userProfile')
 
 

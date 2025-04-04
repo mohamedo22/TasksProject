@@ -6,7 +6,7 @@ from django.db.models import Q
 from taskApp.models import UserProfile
 import magic
 def returnUsers(request):
-    users = UserProfile.objects.filter(userPermission='student')
+    users = UserProfile.objects.filter(userPermission='student').order_by('id')
     if request.method == 'POST':
         filters = request.POST.getlist('filter')
         search = request.POST.get('search')
@@ -19,6 +19,7 @@ def returnUsers(request):
             users = UserProfile.objects.filter(name__icontains=search)
     for user in users:
         user.name = user.name[:11] + "..."
+        user.grade = user.grade.lower()
         for task in user.task_set.all():
             task.title = task.title[:14] + "..."
     page = request.GET.get('page', 1)
