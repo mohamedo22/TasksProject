@@ -4,7 +4,6 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from taskApp.models import UserProfile
-import magic
 def returnUsers(request):
     users = UserProfile.objects.filter(userPermission='student').order_by('id')
     if request.method == 'POST':
